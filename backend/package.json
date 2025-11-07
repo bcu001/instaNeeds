@@ -12,11 +12,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "cookie-parser": "^1.4.7",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "mongoose": "^8.19.3"
-  },"devDependencies": {
+  },
+  "devDependencies": {
     "@eslint/js": "^9.38.0",
-    "eslint": "^9.38.0"
+    "eslint": "^9.38.0",
+    "globals": "^16.4.0"
   }
 }
