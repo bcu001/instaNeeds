@@ -1,11 +1,13 @@
-import React from 'react'
+import React from "react";
+import Navbar from "@/components/Navbar";
 
 const App = () => {
   return (
     <div>
-      InstaNeeds 
+      <Navbar />
+      InstaNeeds
     </div>
-  )
-}
+  );
+};
 
-export default App
+export default App;
