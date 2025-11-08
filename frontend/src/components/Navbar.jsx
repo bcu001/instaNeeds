@@ -10,21 +10,19 @@ const Navbar = () => {
           <h2 className="font-bold text-lg"> Delivery in 11 minutes</h2>
           <div className="text-sm">Burari, Delhi, 110084, India</div>
         </div>
-        {/* change it when feature/routes-setup is done */}
-        <a href="">
+        <Link to="account">
           <CircleUserRound size={30} />
-        </a>
+        </Link>
       </div>
-      {/* change this to search bar link which look like searchbar */}
-      <a
-        href="/"
+      <Link
+        to="/search"
         className=" w-full flex items-center bg-gray-200 px-2 py-3 rounded-xl relative gap-x-3 cursor-text"
       >
         <div className="">
           <Search size={20} />
         </div>
         <div className="">Search....</div>
-      </a>
+      </Link>
     </nav>
   );
 };
