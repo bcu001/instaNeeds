@@ -3,6 +3,7 @@ import Layout from "@/layouts/Layout";
 import HomePage from "@/pages/HomePage";
 import SearchPage from "@/pages/SearchPage";
 import AccountPage from "@/pages/AccountPage";
+import Test from "@/test/Test";
 
 export const router = createBrowserRouter([
   {
@@ -12,6 +13,7 @@ export const router = createBrowserRouter([
       { path: "/", element: <HomePage /> },
       { path: "/search", element: <SearchPage /> },
       { path: "/account", element: <AccountPage /> },
+      // {path:'/test', element: <Test/>}
     ],
   },
 ]);
