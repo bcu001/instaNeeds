@@ -50,8 +50,25 @@ export const signUp = async (req, res) => {
     }
 }
 
-export const signIn = async (req, res, next) => {
+export const signIn = async (req, res) => {
     res.send("log in ")
+    // first get email and password
+    try{
+        const {email, password} = req.body;
+        // check existing User
+
+        
+        // if not there throw error
+        // if there is compare passward with hassword
+        // if not valid throw erro
+        // if valid generate token
+        // send success , token ,data :user
+    } catch(error){
+        res.status(500).json({
+            success: false,
+            message: error?.message,
+        })
+    }
 }
 
 export const signOut = async (req, res, next) => {
