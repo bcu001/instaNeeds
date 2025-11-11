@@ -5,14 +5,14 @@ import jwt from 'jsonwebtoken';
 import { JWT_SECRET, JWT_EXPIRE_IN } from "../config/config.js";
 
 export const signUp = async (req, res) => {
-    
+
     const session = await mongoose.startSession();
     session.startTransaction();
 
     try {
         const { name, email, password, role } = req.body;
 
-        const existingUser = await User.findOne({ email }); 
+        const existingUser = await User.findOne({ email });
 
         if (existingUser) {
             const error = new Error("User already exists");
@@ -51,19 +51,36 @@ export const signUp = async (req, res) => {
 }
 
 export const signIn = async (req, res) => {
-    res.send("log in ")
-    // first get email and password
-    try{
-        const {email, password} = req.body;
-        // check existing User
+    try {
+        const { email, password } = req.body;
 
-        
-        // if not there throw error
-        // if there is compare passward with hassword
-        // if not valid throw erro
-        // if valid generate token
-        // send success , token ,data :user
-    } catch(error){
+        const existingUser = await User.findOne({ email });
+
+        if (!existingUser) {
+            const error = new Error("No match found for data");
+            error.statusCode = 404;
+            throw error;
+        }
+
+        const validPassword = await bcrypt.compare(password, existingUser.password);
+
+        if (!validPassword) {
+            const error = new Error("password is wrong");
+            error.statusCode = 401;
+            throw error;
+        }
+
+        const token = jwt.sign({ userId: existingUser._id }, JWT_SECRET, { expiresIn: JWT_EXPIRE_IN });
+
+        res.status(200).json({
+            success: true,
+            data: {
+                token,
+                user: existingUser
+            }
+        })
+
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: error?.message,
@@ -71,6 +88,6 @@ export const signIn = async (req, res) => {
     }
 }
 
-export const signOut = async (req, res, next) => {
+export const signOut = async (req, res) => {
     res.send("log out ")
 }
