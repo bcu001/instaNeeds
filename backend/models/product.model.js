@@ -29,8 +29,10 @@ const productSchema = new mongoose.Schema({
         min: [1, "stock should be greater or equal to 1"]
     },
     isActive: {
-
-    }, unit: {
+        type: Boolean,
+        default: true
+    }, 
+    unit: {
         type: String,
         required: [true, "unit type is required"],
         enum: {
