@@ -4,6 +4,31 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { JWT_SECRET, JWT_EXPIRE_IN } from "../config/config.js";
 
+export const validate = async (req, res) => {
+    try {
+        let token;
+        if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+
+            token = req.headers.authorization.split(" ")[1];
+        }
+
+        const decoded = jwt.verify(token, JWT_SECRET);
+
+        const user = await User.findById(decoded.userId).select("-password");
+
+        if (!user) throw new Error("Unauthorized");
+
+        res.status(200).json({
+            success:true,
+            data:{
+                user
+            }
+        })
+    } catch (error) {
+        return res.status(401).json({ message: error.message || "Unauthorized" });
+    }
+}
+
 export const signUp = async (req, res) => {
 
     const session = await mongoose.startSession();
@@ -43,7 +68,8 @@ export const signUp = async (req, res) => {
     } catch (error) {
         await session.abortTransaction();
         session.endSession();
-        res.status(500).json({
+        const status = error.statusCode || 500;
+        res.status(status).json({
             success: false,
             message: error?.message,
         })
@@ -81,7 +107,8 @@ export const signIn = async (req, res) => {
         })
 
     } catch (error) {
-        res.status(500).json({
+        const status = error.statusCode || 500;
+        res.status(status).json({
             success: false,
             message: error?.message,
         })
