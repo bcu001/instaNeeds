@@ -7,10 +7,17 @@ import userRouter from './routes/user.routes.js';
 import productRouter from './routes/product.routes.js';
 import fs from 'fs/promises';
 import Product from './models/product.model.js';
+import cors from 'cors';
+
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(
+    cors({
+        origin: "http://localhost:5173" 
+    })
+)
 
 app.use('/api/v1/auth', authRouter);
 app.use("/api/v1/users", userRouter);
