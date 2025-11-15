@@ -1,8 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "@/context/AuthContext";
-
-const server_url = import.meta.env.VITE_SERVER_URL;
+import { Eye, EyeOff } from "lucide-react";
 
 const Login = () => {
   const { signin } = useContext(AuthContext);
@@ -14,6 +13,7 @@ const Login = () => {
 
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -35,6 +35,10 @@ const Login = () => {
     setIsLoading(false);
   };
 
+  const handlePassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <div className="min-h-screen flex flex-col justify-center items-center">
       <div className="w-[300px]">
@@ -52,15 +56,23 @@ const Login = () => {
             required
             onChange={handleChange}
           />
-          <input
-            className="w-full outline-primary bg-input rounded-md p-2 text-text border-secondary border"
-            type="password"
-            name="password"
-            id="password"
-            placeholder="Password"
-            required
-            onChange={handleChange}
-          />
+          <div className="relative">
+            <input
+              className="w-full outline-primary bg-input rounded-md p-2 text-text border-secondary border"
+              type={showPassword ? "text" : "password"}
+              name="password"
+              id="password"
+              placeholder="Password"
+              required
+              onChange={handleChange}
+            />
+            <div
+              onClick={handlePassword}
+              className="absolute right-2 top-2.5 cursor-pointer"
+            >
+              {showPassword ? <Eye /> : <EyeOff />}
+            </div>
+          </div>
           <button
             disabled={isLoading}
             className={`def-btn ${isLoading ? "bg-gray-600" : ""}`}

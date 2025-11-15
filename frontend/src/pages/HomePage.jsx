@@ -1,7 +1,8 @@
 import React from "react";
 import ShopByCategory from "@/components/ShopByCategory";
+import Footer from "@/components/Footer";
 
-const Home = () => {
+const HomePage = () => {
   return (
     <div>
       <ShopByCategory/>
@@ -9,4 +10,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default HomePage;
