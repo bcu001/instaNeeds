@@ -1,57 +1,101 @@
-import React, { useEffect, useState } from "react";
-import { CircleUserRound, Search, ShoppingCart, ArrowLeft } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import {
+  CircleUserRound,
+  Search,
+  ShoppingCart,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
+import { Link } from "react-router-dom";
+import AccountMarkdown from "@/components/AccountMarkdown";
 
 const Navbar = () => {
-  const location = useLocation();
-  const [isBackVisible, SetIsBackVisible] = useState(false);
+  const [showAccount, setShowAccount] = useState(false);
+
+  const handleAccount = () => {
+    setShowAccount(!showAccount);
+  };
 
   useEffect(() => {
-    if (location.pathname !== "/") {
-      SetIsBackVisible(true);
+    if (showAccount) {
+      document.body.classList.add("overflow-hidden");
     } else {
-      SetIsBackVisible(false);
+      document.body.classList.remove("overflow-hidden");
     }
-  }, [location.pathname]);
+  }, [showAccount]);
 
   return (
-    <nav>
-      <div className="flex justify-between items-center p-2 ">
-        <Link to={"/"} className="hidden lg:flex">
-          <img className=" w-9" src="/logo.png" alt="logo" />
-        </Link>
-        {isBackVisible && (
-          <Link to={"/"} className="mr-2 lg:hidden">
-            <ArrowLeft size={25} />
+    <>
+      <nav className={`relative z-50 bg-white`}>
+        <div className="flex justify-between items-center p-2">
+          {/* Logo */}
+          <Link to={"/"} className="hidden lg:flex">
+            <img className="w-9" src="/logo.png" alt="logo" />
           </Link>
-        )}
-        <div className="lg:mx-5 flex-1 lg:flex-none">
-          <h2 className="font-bold text-lg"> Delivery in 11 minutes</h2>
-          <div className="text-sm">New Delhi, Delhi</div>
+
+          {/* Delivery info */}
+          <div className="lg:mx-5 flex-1 lg:flex-none">
+            <h2 className="font-bold text-lg">Delivery in 11 minutes</h2>
+            <div className="text-sm">New Delhi, Delhi</div>
+          </div>
+
+          {/* Search (desktop) */}
+          <Link
+            className="bg-input text-text rounded-xl cursor-pointer lg:flex-1 lg:mx-5 px-3 py-2 lg:flex hidden border-text border-2"
+            to={"/search"}
+          >
+            <Search />
+          </Link>
+
+          {/* Right side */}
+          <div className="flex gap-3 items-center">
+            {/* Account on mobile */}
+            <Link to={"/account"} className=" lg:hidden">
+              <CircleUserRound size={30}/>
+            </Link>
+
+            {/* Account on desktop */}
+            <div
+              onClick={handleAccount}
+              className="hidden lg:flex items-center gap-1 relative "
+            >
+              <span className="text-lg cursor-pointer">Account</span>
+              <div className="cursor-pointer">
+                {showAccount ? <ChevronUp /> : <ChevronDown />}
+              </div>
+
+              {/* Dropdown menu */}
+              {showAccount && (
+                <div className="absolute top-13 right-0 z-[60] shadow-lg">
+                  <AccountMarkdown />
+                </div>
+              )}
+            </div>
+
+            {/* Cart */}
+            {/* <button className="def-btn flex items-center gap-3">
+              <ShoppingCart />
+              <span>My Cart</span>
+            </button> */}
+          </div>
         </div>
-        <Link
-          className=" bg-input text-text  rounded-xl  cursor-pointer lg:flex-1 lg:mx-5 px-3 py-2 lg:flex hidden"
-          to={"/search"}
-        >
-          <div>
+
+        {/* Search (mobile) */}
+        <Link to={"/search"}>
+          <div className="bg-input text-text rounded-xl cursor-pointer lg:hidden m-2 px-3 py-2 border-text border-2">
             <Search />
           </div>
         </Link>
-        <div className="flex gap-3">
-          <Link to={"/account"} className="def-btn">
-            <CircleUserRound />
-          </Link>
-          <button className="def-btn">
-            <ShoppingCart />
-          </button>
-        </div>
-      </div>
-      <Link to={"/search"}>
-        <div className=" bg-input text-text  rounded-xl  cursor-pointer lg:flex-1 lg:mx-5 px-3 py-2 lg:hidden m-2">
-          <Search />
-        </div>
-      </Link>
-    </nav>
+      </nav>
+
+      {/* ---- DARK OVERLAY ---- */}
+      {showAccount && (
+        <div
+          onClick={() => setShowAccount(false)}
+          className="fixed inset-0 bg-black/60 z-40"
+        ></div>
+      )}
+    </>
   );
 };
 
