@@ -1,6 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import {Outlet} from "react-router-dom"
+import Navbar from '@/components/Navbar'
 
 const NoFooterLayout = () => {
   return (
@@ -10,6 +11,7 @@ const NoFooterLayout = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 1.3 }}
     >
+      <Navbar/>
       <Outlet />
     </motion.main>
   )

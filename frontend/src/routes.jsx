@@ -9,9 +9,9 @@ import SignupPage from "@/pages/SignupPage";
 import SigninPage from "@/pages/SigninPage";
 import { AuthContext } from "./context/AuthContext";
 import { useContext } from "react";
-import Loading from "./components/Loading";
-import NoNavbarLayout from "./layouts/NoNavbarLayout";
-import Error404Page from "./pages/Error404Page";
+import Loading from "@/components/Loading";
+import NoNavbarLayout from "@/layouts/NoNavbarLayout";
+import Error404Page from "@/pages/Error404Page";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, authLoading } = useContext(AuthContext);
@@ -39,7 +39,6 @@ export const router = createBrowserRouter([
       { path: "/home", element: <HomePage /> },
       { path: "/account/privacy", element: <Test /> },
       { path: "/category/:category", element: <CategoryPage /> },
-      { path: "/*", element: <Error404Page /> },
     ],
   },
 
@@ -54,6 +53,12 @@ export const router = createBrowserRouter([
       { path: "/account", element: <AccountPage /> },
       { path: "/search", element: <SearchPage /> },
     ],
+  },
+
+  // no footer layout
+  {
+    element: <NoNavbarLayout />,
+    children: [{ path: "/*", element: <Error404Page /> }],
   },
 
   // no signin required for this routes below

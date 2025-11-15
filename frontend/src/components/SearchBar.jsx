@@ -15,7 +15,7 @@ const SearchBar = () => {
     <div className="relative ">
       <form className="flex gap-3" onSubmit={handleOnSubmit}>
         <input
-          className="w-full bg-input text-text px-2 py-3 pl-12 rounded-lg  outline-primary no-clear"
+          className="w-full bg-input text-text px-2 py-3 pl-12 rounded-lg outline-primary no-clear border border-text"
           type="search"
           placeholder="search..."
           value={query}
