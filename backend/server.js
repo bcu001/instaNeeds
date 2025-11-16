@@ -8,6 +8,7 @@ import productRouter from './routes/product.routes.js';
 import fs from 'fs/promises';
 import Product from './models/product.model.js';
 import cors from 'cors';
+import orderRouter from './routes/order.routes.js';
 
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(
 app.use('/api/v1/auth', authRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/products", productRouter);
+app.use("/api/v1/orders", orderRouter);
 
 app.get("/", (req, res) => {
     res.json({ message: "instaNeeds" });
