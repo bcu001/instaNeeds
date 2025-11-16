@@ -24,7 +24,7 @@ const orderItemSchema = new mongoose.Schema({
 }, { _id: false });
 
 const orderSchema = new mongoose.Schema({
-    user: {
+    userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
         required: [true, "userid is required for order"]
@@ -36,7 +36,6 @@ const orderSchema = new mongoose.Schema({
     totalAmount: {
         type: Number,
         min: 0,
-        required: true,
     },
     address: {
         type: String,
