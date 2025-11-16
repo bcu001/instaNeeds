@@ -1,11 +1,22 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 const ProductCard = ({ product }) => {
+  const navigate = useNavigate();
+
+  const handleProductNav = () => {
+    navigate(`/product/${product.title.split(" ").join("-")}`);
+  };
+
+  const handleAddCart = (e) => {
+    e.stopPropagation();
+    console.log("added");
+  };
+
   return (
-    <Link to={`/product/${product.title}`}>
-      <div className="border-[1px] border-gray-300 rounded-md p-2">
+    <div onClick={handleProductNav}>
+      <div className="border border-gray-300 rounded-md p-2 cursor-pointer">
         <div>
           <img src={"logo.png"} alt="" />
         </div>
@@ -18,10 +29,12 @@ const ProductCard = ({ product }) => {
         </div>
         <div className="flex justify-between items-center">
           <div className="font-bold">{`$${product.price}`}</div>
-          <button className="def-btn">ADD</button>
+          <button onClick={handleAddCart} className="def-btn">
+            ADD
+          </button>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
