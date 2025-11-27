@@ -1,6 +1,6 @@
 import React from "react";
-import ShopByCategory from "@/components/ShopByCategory";
-import Footer from "@/components/Footer";
+import ShopByCategory from "@/components/product/ShopByCategory";
+import Footer from "@/components/common/Footer";
 
 const HomePage = () => {
   return (

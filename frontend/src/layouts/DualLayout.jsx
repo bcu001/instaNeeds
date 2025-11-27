@@ -1,8 +1,8 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
 import { motion } from "framer-motion";
-import Navbar_v2 from "@/components/Navbar_v2";
-import Navbar from "@/components/Navbar";
+import Navbar_v2 from "@/components/common/Navbar_v2";
+import Navbar from "@/components/common/Navbar";
 
 const DualLayout = () => {
   return (
