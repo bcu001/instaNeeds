@@ -7,7 +7,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import AccountMarkdown from "@/components/AccountMarkdown";
+import AccountMarkdown from "@/components/user/AccountMarkdown";
 
 const Navbar = () => {
   const [showAccount, setShowAccount] = useState(false);

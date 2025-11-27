@@ -1,9 +1,12 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useContext } from "react";
+import { CartContext } from "@/context/CartContext";
 
 const ProductCard = ({ product }) => {
   const navigate = useNavigate();
+  const { addToCart } = useContext(CartContext);
 
   const handleProductNav = () => {
     navigate(`/product/${product.title.split(" ").join("-")}`);
@@ -11,7 +14,7 @@ const ProductCard = ({ product }) => {
 
   const handleAddCart = (e) => {
     e.stopPropagation();
-    console.log("added");
+    addToCart(product);
   };
 
   return (
@@ -24,11 +27,11 @@ const ProductCard = ({ product }) => {
           15 mins
         </div>
         <div>
-          <div className="font-bold">{product.title}</div>
+          <div className="font-bold w-full truncate">{product.title}</div>
           <div className="text-gray-400 text-sm">{`${1} ${product.unit}`}</div>
         </div>
         <div className="flex justify-between items-center">
-          <div className="font-bold">{`$${product.price}`}</div>
+          <div className="font-bold">{`₹ ${product.price}`}</div>
           <button onClick={handleAddCart} className="def-btn">
             ADD
           </button>

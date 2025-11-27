@@ -1,5 +1,5 @@
 import React from "react";
-import CategoryCard from "@/components/CategoryCard";
+import CategoryCard from "@/components/product/CategoryCard";
 import category from "@/utils/category.js";
 
 const ShopByCategory = () => {
