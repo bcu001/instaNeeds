@@ -9,11 +9,12 @@ import SignupPage from "@/pages/SignupPage";
 import SigninPage from "@/pages/SigninPage";
 import { AuthContext } from "@/context/AuthContext";
 import { useContext } from "react";
-import Loading from "@/components/Loading";
+import Loading from "@/components/common/Loading";
 import NoNavbarLayout from "@/layouts/NoNavbarLayout";
 import Error404Page from "@/pages/Error404Page";
 import ProductPage from "@/pages/ProductPage";
 import DualLayout from "./layouts/DualLayout";
+import CartPage from "@/pages/CartPage";
 
 const ProtectedRoute = ({ children }) => {
   const { isAuthenticated, authLoading } = useContext(AuthContext);
@@ -43,7 +44,7 @@ export const router = createBrowserRouter([
       { path: "/category/:category", element: <CategoryPage /> },
     ],
   },
-
+  
   // no navbar layout
   {
     element: (
@@ -51,7 +52,10 @@ export const router = createBrowserRouter([
         <NoNavbarLayout />
       </ProtectedRoute>
     ),
-    children: [{ path: "/search", element: <SearchPage /> }],
+    children: [
+      { path: "/search", element: <SearchPage /> },
+      {path:"/cart", element:<CartPage/>}
+    ],
   },
 
   // v2 Navbar layout

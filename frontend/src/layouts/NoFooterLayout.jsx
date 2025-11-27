@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import {Outlet} from "react-router-dom"
-import Navbar from '@/components/Navbar'
+import Navbar from '@/components/common/Navbar'
 
 const NoFooterLayout = () => {
   return (

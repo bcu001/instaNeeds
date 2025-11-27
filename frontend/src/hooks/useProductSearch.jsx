@@ -17,7 +17,7 @@ const useProductSearch = (query) => {
       setData([]);
 
       // if the query is empty show error
-      if (!query.trim()) {
+      if (!query) {
         setError("Enter something to be searched");
         setLoading(false);
         return;

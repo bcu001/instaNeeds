@@ -1,79 +1,75 @@
 import { useEffect } from "react";
+import { useMemo } from "react";
 import { useState } from "react";
 import { createContext } from "react";
 
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  //  cart's items -> productId , quantity, price
   const [cart, setCart] = useState([]);
-  const [totalAmount, setTotalAmount] = useState(0);
 
-  //   restore cart info when refreshing the page
+  const syncCart = (newCart) => {
+    setCart(newCart);
+    localStorage.setItem("cart", JSON.stringify(newCart));
+  };
+
   useEffect(() => {
-    const newCart = JSON.parse(localStorage.getItem("cart"));
-    if (newCart) setCart(newCart);
+    const storedCart = localStorage.getItem("cart");
+    if (storedCart) setCart(JSON.parse(storedCart));
   }, []);
 
-  // make an use usefect for total price with items as dependecy
-  useEffect(() => {
-    const evalTotalAmount = async () => {
-      let sum = 0;
-
-      for (let i = 0; i < cart.length; i++) {
-        sum += cart[i].price * cart[i].quantity;
-      }
-
-      setTotalAmount(sum);
-    };
-
-    evalTotalAmount();
+  const totalAmount = useMemo(() => {
+    return cart.reduce((sum, item) => {
+      const price = Number(item.price) || 0;
+      const qty = Number(item.quantity) || 0;
+      return sum + price * qty;
+    }, 0);
   }, [cart]);
 
   const addToCart = (product) => {
     const newCart = [...cart];
+    const pIdx = newCart.findIndex((p) => p._id === product._id);
 
-    const productIndex = newCart.findIndex((prod) => prod._id === product._id);
+    if (pIdx !== -1) {
+      newCart[pIdx] = {
+        ...newCart[pIdx],
+        quantity: newCart[pIdx].quantity + (product.quantity || 1),
+      };
+    } else {
+      const { _id, title, price, quantity = 1, imageURL } = product;
+      newCart.push({ _id, title, price, quantity, imageURL });
+    }
 
-    if (productIndex !== -1) {
-      newCart[productIndex].quantity += product.quantity;
-    } else newCart.push(product);
-
-    setCart(newCart);
-
-    localStorage.setItem("cart", JSON.stringify(newCart));
+    syncCart(newCart);
   };
 
   const removeFromCart = (product) => {
-    const newCart = [...cart];
-
-    const productIndex = newCart.findIndex((prod) => prod._id === product._id);
-
-    if (productIndex !== -1) {
-      newCart.splice(productIndex, 1);
-    }
-
-    setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
+    const newCart = cart.filter((p) => p._id !== product._id);
+    syncCart(newCart);
   };
 
   const clearCart = () => {
-    setCart([]);
-    localStorage.removeItem("cart");
+    syncCart([]);
   };
 
-  return (
-    <CartContext.Provider
-      value={{
-        cart,
-        setCart,
-        totalAmount,
-        addToCart,
-        removeFromCart,
-        clearCart,
-      }}
-    >
-      {children}
-    </CartContext.Provider>
+  const updateCart = (_id, updates) => {
+    const newCart = cart.map((item) =>
+      item._id === _id ? { ...item, ...updates } : item
+    );
+    syncCart(newCart);
+  };
+
+  const value = useMemo(
+    () => ({
+      cart,
+      totalAmount,
+      addToCart,
+      removeFromCart,
+      updateCart,
+      clearCart,
+    }),
+    [cart, totalAmount]
   );
+
+  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };
