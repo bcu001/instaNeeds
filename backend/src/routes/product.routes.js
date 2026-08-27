@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { bulkUploadProducts, createProduct, deleteProduct, getProductById, getProductsByCategory, getSearch, updateProduct } from '../controllers/product.controller.js';
+import { bulkUploadProducts, createProduct, deleteProduct, getProductById, getProductsByCategory, getSearch, updateProduct,getProducts  } from '../controllers/product.controller.js';
 
 const productRouter = Router();
 
+productRouter.get("/", getProducts)
 productRouter.post("/", createProduct);
 productRouter.get("/search", getSearch);
 productRouter.get("/:id", getProductById);

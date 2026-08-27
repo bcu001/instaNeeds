@@ -6,6 +6,12 @@ const productSchema = new mongoose.Schema({
         required: true,
         trim: true,
         minlength: 2,
+        unique:true
+    },
+    description:{
+        type:String,
+        required:true,
+        trim:true
     },
     imageURL: {
         type: String,

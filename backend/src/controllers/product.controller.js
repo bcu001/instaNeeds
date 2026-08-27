@@ -1,24 +1,25 @@
 import Product from "../models/product.model.js"
+import apiResponse from "../utils/apiResponse.js";
+
+export const getProducts = async(req,res)=>{
+    try{
+        const products = await Product.find().sort({createdAt:-1})
+        if(products.length < 0) return apiResponse(res,"no product found",404, products);
+        return apiResponse(res, "products found", 200, {products});
+    } catch(error){
+        console.error("Error at getProducts",error);
+        return apiResponse(res,"error at getProducts",500);
+    }
+}
 
 export const createProduct = async (req, res) => {
     try {
-        const clientProductInfo = req.body;
-
-        const newProduct = new Product(clientProductInfo);
-
-        await newProduct.save();
-
-        return res.status(200).json({
-            success: true,
-            data: {
-                data: newProduct
-            }
-        })
+        const {product} = req.body;
+        const newProduct = new Product.create(product);
+        return apiResponse(res,"product added to db", 201,{newProduct});
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        })
+        console.error("Error at createProduct",error);
+        return apiResponse(res,"error at createProduct",500);
     }
 }
 

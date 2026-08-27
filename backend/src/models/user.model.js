@@ -20,15 +20,16 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: [true, 'user password is required'],
         minlength: 6,
+        select:false
     },
     role: {
         type: String,
         required: [true, 'role of user is required'],
         enum: {
-            values: ["admin", "customer"],
+            values: ["admin", "user"],
             message: '{VALUE} is not supported'
         },
-        default: "customer"
+        default: "user"
     }
 }, { timestamps: true })
 
