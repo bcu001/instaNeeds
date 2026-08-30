@@ -3,9 +3,29 @@ import apiResponse from "../utils/apiResponse.js";
 
 export const getProducts = async(req,res)=>{
     try{
-        const products = await Product.find().sort({createdAt:-1})
+        const q = req.query.q;
+        const search = q ? { $or:[
+                    {title:{$regex:q, $options:"i"}},
+                    {description:{$regex:q,$options:"i"}}
+                ]} : {};
+
+        const page =Math.max(Number(req.query.page) || 1,1);
+        const totalProducts = await Product.countDocuments(search);
+        const limit = 20;
+        const totalPages = Math.ceil(totalProducts/limit);
+        if(page > totalProducts && totalProducts > 0) return apiResponse(res, `page ${page} does not exist`,400);
+
+        const skip = (page - 1) * limit;
+        const products = await Product.find(search).limit(limit).skip(skip);
         if(products.length < 0) return apiResponse(res,"no product found",404, products);
-        return apiResponse(res, "products found", 200, {products});
+        return apiResponse(res, "products found", 200, {
+            totalProducts,
+            currPage: page,
+            limit,
+            skip,
+            totalPages,
+            products,
+        });
     } catch(error){
         console.error("Error at getProducts",error);
         return apiResponse(res,"error at getProducts",500);
@@ -23,118 +43,36 @@ export const createProduct = async (req, res) => {
     }
 }
 
-export const getSearch = async (req, res) => {
-    // search product using category? searchText? limit? 
-    // url example -> http://localhost:5500/api/v1/products/search?q=iphone&category=mobile&limit=10&page=1
-    try {
-        const { q = "", category = "", limit = 5, page = 1 } = req.query;
-
-        const skip = (Number(page) - 1) * Number(limit);
-
-
-        const hasSearchQuery = q.trim() !== "" || category.trim() !== "";
-
-        if (!hasSearchQuery) return res.status(400).json({
-            success: false,
-            message: "Give atleast searchText or category"
-        })
-
-        const byTitle = [];
-        const byCategory = [];
-
-        const facetStage = {};
-
-        if (q.trim() !== "") {
-            byTitle.push({ $match: { title: { $regex: q, $options: "i" } } });
-            facetStage.byTitle = byTitle;
-        }
-
-        if (category.trim() !== "") {
-            byCategory.push({ $match: { category: { $regex: category, $options: "i" } } })
-
-            facetStage.byCategory  = byCategory;
-        }
-
-        const pipelines = [
-            {
-                $facet:facetStage
-            },
-            {
-                $project: {
-                    combined: {
-                        $setUnion: [
-                            { $ifNull: ["$byTitle", []] },
-                            { $ifNull: ["$byCategory", []] }
-                        ]
-                    }
-                }
-
-            },
-            { $unwind: "$combined" },
-            {
-                $group: {
-                    _id: "$combined._id",
-                    doc: { $first: "$combined" }
-                }
-            },
-            {
-                $replaceRoot: { newRoot: "$doc" }
-            },
-            { $skip: skip },
-            { $limit: Number(limit) }
-        ];
-
-        const searchResult = await Product.aggregate(pipelines);
-
-        return res.status(200).json({
-            success: true,
-            data: {
-                query: q,
-                category,
-                productList: searchResult
-            }
-        })
-
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        })
-    }
-}
-
 export const getProductById = async (req, res) => {
     try {
         const existingProduct = await Product.findById(req.params.id);
-
-        if (!existingProduct) {
-            const error = new Error("No product found");
-            error.statusCode = 404;
-            throw error;
-        }
-
-        return res.status(200).json({
-            success: true,
-            data: {
-                product: existingProduct
-            }
-        })
-
+        if (!existingProduct) return apiResponse(res, "No product found", 404);
+        return apiResponse(res, "product found", 200,{product:existingProduct});
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        })
+         console.error("Error at getProductById",error);
+        return apiResponse(res,"error at getProductById",500);
     }
 }
 
-
-export const updateProduct = (req, res) => {
-    // udpate existing product (only admin)
+export const updateProduct = async(req, res) => {
+     try{
+        const {product} = req.body;
+        const updatedProduct = await Product.findByIdAndUpdate(req.params.id,{product});
+        return apiResponse(res,"product deleted", 200,{updatedProduct});
+    } catch (error){
+        console.error("Error at deleteProduct",error);
+        return apiResponse(res,"error at deleteProduct",500);
+    }
 }
 
-export const deleteProduct = (req, res) => {
-    // delete product from db (only admin)
+export const deleteProduct = async(req, res) => {
+    try{
+        const product = await Product.findByIdAndDelete(req.params.id);
+        return apiResponse(res,"product deleted", 200,{product});
+    } catch (error){
+        console.error("Error at deleteProduct",error);
+        return apiResponse(res,"error at deleteProduct",500);
+    }
 }
 
 export const getProductsByCategory = async (req, res) => {
