@@ -1,4 +1,6 @@
-instaNeeds
+# instaNeeds
 
-i have to make a middleware for admin only apis
-it check whether the user have admin rights to use that particular endpoint
+## notes
+1. order apis
+2. admin apis
+3. frontend context ? zustand or native context api or tanstack query
