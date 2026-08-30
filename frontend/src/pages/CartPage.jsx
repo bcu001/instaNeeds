@@ -1,67 +1,128 @@
-import CartCard from "@/components/cart/CartCard";
-import { CartContext } from "@/context/CartContext";
-import { X, Timer } from "lucide-react";
-import React from "react";
-import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router"
+import { useCart } from "@/context/CartContext"
+import { formatPrice } from "@/data/mockData"
+import ProductImage from "@/components/product/ProductImage"
+import QuantityStepper from "@/components/product/QuantityStepper"
+
+const FREE_DELIVERY_ABOVE = 199
+const DELIVERY_FEE = 39
 
 const CartPage = () => {
-  const { cart, totalAmount } = useContext(CartContext);
+	const { items, updateQty, removeItem, clearCart, subtotal, itemCount } = useCart()
+	const navigate = useNavigate()
 
-  console.log("CartPage Rendering");
+	const deliveryFee = items.length === 0 || subtotal >= FREE_DELIVERY_ABOVE ? 0 : DELIVERY_FEE
+	const total = subtotal + deliveryFee
 
-  return (
-    <div className="bg-gray-200 min-h-screen space-y-4">
-      {/* header */}
-      <section className="flex justify-between p-4 sticky bg-white top-0 ">
-        <h1 className="font-semibold text-">My Cart</h1>
-        <Link to={"/home"}>
-          <X />
-        </Link>
-      </section>
+	if (items.length === 0) {
+		return (
+			<div className="mx-auto grid place-items-center px-4 py-24 text-center">
+				<div>
+					<p className="text-7xl">🛒</p>
+					<h1 className="mt-5 text-2xl font-bold">Your cart is empty</h1>
+					<p className="mt-2 text-sm text-base-content/55">
+						Looks like you haven’t added anything yet. Let’s fix that.
+					</p>
+					<Link to="/products" className="btn btn-primary mt-6 rounded-full px-6">
+						Start shopping
+					</Link>
+				</div>
+			</div>
+		)
+	}
 
-      <section className="bg-white p-4 rounded-md space-y-4 mx-3">
-        {/* first part */}
-        <div className="flex items-center gap-5 border-b-1 pb-2">
-          <div className="bg-gray-100 flex justify-center items-center p-2 rounded-md">
-            <Timer size={35} />
-          </div>
-          <div className="">
-            <h2 className="font-bold text-lg">Deliver in 8 minutes</h2>
-            <p className="text-sm text-gray-500">
-              {`Shipment of ${cart.length} items`}
-            </p>
-          </div>
-        </div>
+	return (
+		<div className="mx-auto max-w-7xl px-4 pt-8 pb-20">
+			<div className="flex flex-wrap items-center justify-between gap-3">
+				<h1 className="text-2xl font-bold">Your cart</h1>
+				<button
+					type="button"
+					onClick={clearCart}
+					className="btn btn-ghost btn-sm text-base-content/55 hover:text-error"
+				>
+					Clear cart
+				</button>
+			</div>
 
-        {/* second part */}
-        <div className="space-y-5">
-          {cart.map((i) => (
-            <CartCard product={i} key={i._id} />
-          ))}
-        </div>
-      </section>
+			<div className="mt-6 grid gap-6 lg:grid-cols-[1fr_360px]">
+				{/* items */}
+				<ul className="divide-y divide-base-200 rounded-box border border-base-200 bg-base-100">
+					{items.map((i) => (
+						<li key={i._id} className="flex items-center gap-4 p-4">
+							<Link to={`/products/${i._id}`} className="shrink-0">
+								<ProductImage
+									src={i.imageURL}
+									alt={i.title}
+									emoji={i.emoji}
+									className="h-20 w-20 rounded-box"
+								/>
+							</Link>
 
-      {/* bill secton */}
-      <section className="bg-white mx-3 mt-4 p-4 rounded-lg shadow-sm">
-        <h2 className="font-semibold text-base mb-3">Bill Details</h2>
+							<div className="min-w-0 flex-1">
+								<Link
+									to={`/products/${i._id}`}
+									className="block truncate text-sm font-semibold hover:text-primary"
+								>
+									{i.title}
+								</Link>
+								<p className="text-xs text-base-content/55">
+									{formatPrice(i.price)} · {i.unit}
+								</p>
+								<p className="mt-0.5 text-xs text-base-content/45">
+									In stock · <button type="button" onClick={() => removeItem(i._id)} className="text-error/80 underline-offset-2 hover:underline">Remove</button>
+								</p>
+							</div>
 
-        <div className="flex justify-between text-sm text-gray-700 py-1">
-          <span>Item Total</span>
-          <span>₹ {totalAmount}</span>
-        </div>
-        <div className="flex justify-between text-sm text-gray-700 py-1">
-          <span>Delivery Fee</span>
-          <span>₹ 0</span>
-        </div>
+							<div className="flex flex-col items-end gap-2">
+								<QuantityStepper productId={i._id} size="lg" />
+								<span className="text-sm font-bold">{formatPrice(i.price * i.qty)}</span>
+							</div>
+						</li>
+					))}
+				</ul>
 
-        <div className="border-t mt-3 pt-3 flex justify-between font-semibold text-base">
-          <span>Total Amount</span>
-          <span>₹ {totalAmount}</span>
-        </div>
-      </section>
-    </div>
-  );
-};
+				{/* summary */}
+				<aside className="h-fit rounded-box border border-base-200 bg-base-100 p-5 lg:sticky lg:top-24">
+					<h2 className="text-base font-bold">Order summary</h2>
+					<dl className="mt-4 space-y-2.5 text-sm">
+						<div className="flex justify-between">
+							<dt className="text-base-content/60">Subtotal ({itemCount} item{itemCount > 1 ? "s" : ""})</dt>
+							<dd className="font-medium">{formatPrice(subtotal)}</dd>
+						</div>
+						<div className="flex justify-between">
+							<dt className="text-base-content/60">Delivery fee</dt>
+							<dd className="font-medium">{deliveryFee === 0 ? <span className="text-success">FREE</span> : formatPrice(deliveryFee)}</dd>
+						</div>
+						<div className="flex justify-between border-t border-dashed border-base-300 pt-3 text-base">
+							<dt className="font-bold">Total</dt>
+							<dd className="font-extrabold">{formatPrice(total)}</dd>
+						</div>
+					</dl>
 
-export default CartPage;
+					{subtotal < FREE_DELIVERY_ABOVE ? (
+						<p className="mt-3 rounded-box bg-base-200 px-3 py-2 text-xs text-base-content/70">
+							Add {formatPrice(FREE_DELIVERY_ABOVE - subtotal)} more to unlock free delivery 🎉
+						</p>
+					) : (
+						<p className="mt-3 rounded-box bg-success/10 px-3 py-2 text-xs text-success">
+							🎉 You’ve unlocked free delivery
+						</p>
+					)}
+
+					<button
+						type="button"
+						onClick={() => navigate("/checkout")}
+						className="btn btn-primary mt-5 w-full rounded-full"
+					>
+						Proceed to checkout
+					</button>
+					<Link to="/products" className="btn btn-ghost mt-2 w-full text-base-content/60">
+						Continue shopping
+					</Link>
+				</aside>
+			</div>
+		</div>
+	)
+}
+
+export default CartPage

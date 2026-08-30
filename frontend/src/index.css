@@ -1,38 +1,63 @@
 @import "tailwindcss";
 
-
-@theme {
-    --color-primary: #2563EB;
-    --color-secondary: #6B7280;
-    --color-background: #fff;
-    --color-text: #000;
-    --color-input: #f3f3f3;
-    --color-error: #EF4444;
-    --color-success: #DC2626;
+@plugin "daisyui" {
+	themes: false;
 }
 
-@layer components {
-    .test-border {
-        @apply border border-red-700;
-    }
+@plugin "daisyui/theme" {
+	name: "insta";
+	default: true;
+	prefersdark: false;
+	color-scheme: light;
 
-    .header {
-        @apply font-bold text-lg;
-    }
+	--color-base-100: oklch(99% 0.004 110);
+	--color-base-200: oklch(97% 0.006 110);
+	--color-base-300: oklch(92% 0.01 110);
+	--color-base-content: oklch(33% 0.025 130);
 
-    .def-input {
-        @apply w-full outline-primary bg-input rounded-md p-2 text-text border-secondary border;
-    }
+	--color-primary: oklch(63% 0.14 160);
+	--color-primary-content: oklch(99% 0 0);
 
-    .def-btn {
-        @apply p-2 rounded-md bg-primary text-white font-bold capitalize cursor-pointer hover:scale-105 active:scale-95 transition-transform duration-100;
-    }
+	--color-secondary: oklch(75% 0.1 155);
+	--color-secondary-content: oklch(26% 0.06 160);
 
-    .def-pad {
-        @apply px-3 py-4;
-    }
+	--color-accent: oklch(82% 0.1 85);
+	--color-accent-content: oklch(30% 0.08 90);
 
-    body {
-        @apply bg-background text-text;
-    }
+	--color-neutral: oklch(42% 0.02 150);
+	--color-neutral-content: oklch(97% 0 0);
+
+	--color-info: oklch(72% 0.12 230);
+	--color-info-content: oklch(20% 0.08 230);
+	--color-success: oklch(70% 0.13 150);
+	--color-success-content: oklch(24% 0.08 150);
+	--color-warning: oklch(80% 0.14 75);
+	--color-warning-content: oklch(30% 0.09 75);
+	--color-error: oklch(64% 0.15 24);
+	--color-error-content: oklch(97% 0 0);
+
+	--radius-selector: 0.75rem;
+	--radius-field: 0.6rem;
+	--radius-box: 1rem;
+	--radius-btn: 0.9rem;
+	--border: 1px;
+}
+
+@layer base {
+	html {
+		scroll-behavior: smooth;
+	}
+	body {
+		@apply bg-base-100 text-base-content font-sans antialiased;
+	}
+	::selection {
+		@apply bg-primary/15 text-primary;
+	}
+}
+
+@utility no-scrollbar {
+	scrollbar-width: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
 }

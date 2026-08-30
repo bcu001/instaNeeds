@@ -1,102 +1,64 @@
-import React, { useState, useEffect } from "react";
-import {
-  CircleUserRound,
-  Search,
-  ShoppingCart,
-  ChevronDown,
-  ChevronUp,
-} from "lucide-react";
-import { Link } from "react-router-dom";
-import AccountMarkdown from "@/components/user/AccountMarkdown";
+import { Link } from "react-router"
+import { useCart } from "@/context/CartContext"
+import { categories } from "@/data/mockData"
+import { ShoppingCart } from "lucide-react"
+import { Search } from "lucide-react"
+import { Menu } from "lucide-react"
 
 const Navbar = () => {
-  const [showAccount, setShowAccount] = useState(false);
+	const { itemCount, openDrawer } = useCart()
 
-  const handleAccount = () => {
-    setShowAccount(!showAccount);
-  };
+	return (
+		<header className="sticky top-0 z-40 border-b border-base-200 bg-base-100/90 backdrop-blur">
+			<div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
+				
+				<Link to="/" className="flex shrink-0 items-center gap-2">
+					<span className="grid h-9 w-9 place-items-center rounded-xl bg-primary text-lg text-primary-content">
+						🧺
+					</span>
+					<span className="text-lg font-bold tracking-tight">
+						insta<span className="text-primary">Needs</span>
+					</span>
+				</Link>
 
-  useEffect(() => {
-    if (showAccount) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
-  }, [showAccount]);
+				{/* desktop search */}
+				<nav className="ml-auto flex items-center gap-1.5 sm:gap-2">
+					<Link className="btn btn-ghost btn-circle relative text-base-content" to={`/products`}> <Search/> </Link>
+					<button
+						type="button"
+						onClick={openDrawer}
+						className="btn btn-ghost btn-circle relative text-base-content"
+						aria-label={`Open cart, ${itemCount} items`}
+					>
+						<ShoppingCart />
+						{itemCount > 0 ? (
+							<span className="badge badge-primary absolute -right-0.5 -top-0.5 badge-sm min-w-5 p-1 text-[10px]">
+								{itemCount}
+							</span>
+						) : null}
+					</button>
 
-  return (
-    <>
-      <nav className={`relative z-50 bg-white`}>
-        <div className="flex justify-between items-center p-2">
-          {/* Logo */}
-          <Link to={"/"} className="hidden lg:flex">
-            <img className="w-9" src="/logo.png" alt="logo" />
-          </Link>
+					{/* mobile menu */}
+					<div className="dropdown dropdown-end md:hidden">
+						<button className="btn btn-ghost btn-circle text-base-content" aria-label="Menu"> <Menu/> </button>
+						<ul className="menu dropdown-content z-50 mt-3 w-56 rounded-box border border-base-200 bg-base-100 p-2 shadow-lg">
+							<li><Link to="/">Home</Link></li>
+							<li><Link to="/products">Shop all</Link></li>
+							<li className="menu-title mt-2">Categories</li>
+							{categories.map((c) => (
+								<li key={c.slug}>
+									<Link to={`/products?category=${c.slug}`}>
+										{c.emoji} {c.name}
+									</Link>
+								</li>
+							))}
+							<li className="mt-2"><Link to="/cart">🛒 My cart</Link></li>
+						</ul>
+					</div>
+				</nav>
+			</div>
+		</header>
+	)
+}
 
-          {/* Delivery info */}
-          <div className="lg:mx-5 flex-1 lg:flex-none">
-            <h2 className="font-bold text-lg">Delivery in 11 minutes</h2>
-            <div className="text-sm">New Delhi, Delhi</div>
-          </div>
-
-          {/* Search (desktop) */}
-          <Link
-            className="bg-input text-text rounded-xl cursor-pointer lg:flex-1 lg:mx-5 px-3 py-2 lg:flex hidden border-text border-2"
-            to={"/search"}
-          >
-            <Search />
-          </Link>
-
-          {/* Right side */}
-          <div className="flex gap-3 items-center">
-            {/* Account on mobile */}
-            <Link to={"/account"} className=" lg:hidden">
-              <CircleUserRound size={30}/>
-            </Link>
-
-            {/* Account on desktop */}
-            <div
-              onClick={handleAccount}
-              className="hidden lg:flex items-center gap-1 relative "
-            >
-              <span className="text-lg cursor-pointer">Account</span>
-              <div className="cursor-pointer">
-                {showAccount ? <ChevronUp /> : <ChevronDown />}
-              </div>
-
-              {/* Dropdown menu */}
-              {showAccount && (
-                <div className="absolute top-13 right-0 z-[60] shadow-lg">
-                  <AccountMarkdown />
-                </div>
-              )}
-            </div>
-
-            {/* Cart */}
-            {/* <button className="def-btn flex items-center gap-3">
-              <ShoppingCart />
-              <span>My Cart</span>
-            </button> */}
-          </div>
-        </div>
-
-        {/* Search (mobile) */}
-        <Link to={"/search"}>
-          <div className="bg-input text-text rounded-xl cursor-pointer lg:hidden m-2 px-3 py-2 border-text border-2">
-            <Search />
-          </div>
-        </Link>
-      </nav>
-
-      {/* ---- DARK OVERLAY ---- */}
-      {showAccount && (
-        <div
-          onClick={() => setShowAccount(false)}
-          className="fixed inset-0 bg-black/60 z-40"
-        ></div>
-      )}
-    </>
-  );
-};
-
-export default Navbar;
+export default Navbar

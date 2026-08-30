@@ -1,75 +1,115 @@
-import { useEffect } from "react";
-import { useMemo } from "react";
-import { useState } from "react";
-import { createContext } from "react";
+import { createContext, useContext, useEffect, useMemo, useState, useCallback } from "react"
+import toast from "react-hot-toast"
 
-export const CartContext = createContext();
+const CartContext = createContext(null)
+const STORAGE_KEY = "instaneeds.cart"
+const MAX_QTY = 25
+
+const loadCart = () => {
+	try {
+		return JSON.parse(localStorage.getItem(STORAGE_KEY)) ?? []
+	} catch {
+		return []
+	}
+}
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState([]);
+	const [items, setItems] = useState(loadCart)
+	const [isDrawerOpen, setDrawerOpen] = useState(false)
 
-  const syncCart = (newCart) => {
-    setCart(newCart);
-    localStorage.setItem("cart", JSON.stringify(newCart));
-  };
+	useEffect(() => {
+		try {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(items))
+		} catch {
+			/* private mode etc. — cart just won't persist */
+		}
+	}, [items])
 
-  useEffect(() => {
-    const storedCart = localStorage.getItem("cart");
-    if (storedCart) setCart(JSON.parse(storedCart));
-  }, []);
+	const addItem = useCallback((product, qty = 1) => {
+		setItems((prev) => {
+			const existing = prev.find((i) => i._id === product._id)
+			if (existing) {
+				return prev.map((i) =>
+					i._id === product._id ? { ...i, qty: Math.min(i.qty + qty, MAX_QTY) } : i,
+				)
+			}
+			return [
+				...prev,
+				{
+					_id: product._id,
+					title: product.title,
+					price: product.price,
+					unit: product.unit,
+					imageURL: product.imageURL,
+					emoji: product.emoji,
+					stock: product.stock,
+					qty,
+				},
+			]
+		})
+		toast.success(`${product.title} added to cart`)
+	}, [])
 
-  const totalAmount = useMemo(() => {
-    return cart.reduce((sum, item) => {
-      const price = Number(item.price) || 0;
-      const qty = Number(item.quantity) || 0;
-      return sum + price * qty;
-    }, 0);
-  }, [cart]);
+	const updateQty = useCallback((id, delta) => {
+		setItems((prev) =>
+			prev
+				.map((i) => (i._id === id ? { ...i, qty: Math.min(Math.max(i.qty + delta, 0), MAX_QTY) } : i))
+				.filter((i) => i.qty > 0),
+		)
+	}, [])
 
-  const addToCart = (product) => {
-    const newCart = [...cart];
-    const pIdx = newCart.findIndex((p) => p._id === product._id);
+	const setQty = useCallback((id, qty) => {
+		setItems((prev) =>
+			prev
+				.map((i) => (i._id === id ? { ...i, qty: Math.min(Math.max(qty, 0), MAX_QTY) } : i))
+				.filter((i) => i.qty > 0),
+		)
+	}, [])
 
-    if (pIdx !== -1) {
-      newCart[pIdx] = {
-        ...newCart[pIdx],
-        quantity: newCart[pIdx].quantity + (product.quantity || 1),
-      };
-    } else {
-      const { _id, title, price, quantity = 1, imageURL } = product;
-      newCart.push({ _id, title, price, quantity, imageURL });
-    }
+	const removeItem = useCallback((id) => {
+		setItems((prev) => prev.filter((i) => i._id !== id))
+	}, [])
 
-    syncCart(newCart);
-  };
+	const clearCart = useCallback(() => {
+		setItems([])
+	}, [])
 
-  const removeFromCart = (product) => {
-    const newCart = cart.filter((p) => p._id !== product._id);
-    syncCart(newCart);
-  };
+	const getQty = useCallback((id) => items.find((i) => i._id === id)?.qty ?? 0, [items])
+	const isInCart = useCallback((id) => items.some((i) => i._id === id), [items])
 
-  const clearCart = () => {
-    syncCart([]);
-  };
+	const subtotal = useMemo(() => items.reduce((sum, i) => sum + i.price * i.qty, 0), [items])
+	const itemCount = useMemo(() => items.reduce((sum, i) => sum + i.qty, 0), [items])
 
-  const updateCart = (_id, updates) => {
-    const newCart = cart.map((item) =>
-      item._id === _id ? { ...item, ...updates } : item
-    );
-    syncCart(newCart);
-  };
+	const openDrawer = useCallback(() => setDrawerOpen(true), [])
+	const closeDrawer = useCallback(() => setDrawerOpen(false), [])
 
-  const value = useMemo(
-    () => ({
-      cart,
-      totalAmount,
-      addToCart,
-      removeFromCart,
-      updateCart,
-      clearCart,
-    }),
-    [cart, totalAmount]
-  );
+	const value = useMemo(
+		() => ({
+			items,
+			addItem,
+			updateQty,
+			setQty,
+			removeItem,
+			clearCart,
+			getQty,
+			isInCart,
+			subtotal,
+			itemCount,
+			isDrawerOpen,
+			openDrawer,
+			closeDrawer,
+		}),
+		[
+			items, addItem, updateQty, setQty, removeItem, clearCart,
+			getQty, isInCart, subtotal, itemCount, isDrawerOpen, openDrawer, closeDrawer,
+		],
+	)
 
-  return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
-};
+	return <CartContext.Provider value={value}>{children}</CartContext.Provider>
+}
+
+export const useCart = () => {
+	const ctx = useContext(CartContext)
+	if (!ctx) throw new Error("useCart must be used within <CartProvider>")
+	return ctx
+}

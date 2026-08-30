@@ -1,10 +1,20 @@
-import React from "react";
-import "@/App.css";
-import { RouterProvider } from "react-router-dom";
-import { router } from "@/routes";
+import AppRoutes from './routes/AppRoutes'
+import Navbar from '@/components/common/Navbar'
+import Footer from '@/components/common/Footer'
+import CartDrawer from '@/components/common/CartDrawer'
+import { CartProvider } from '@/context/CartContext'
 
 const App = () => {
-  return <RouterProvider router={router} />;
-};
+  return (
+    <CartProvider>
+      <Navbar />
+      <main className="min-h-[60vh]">
+        <AppRoutes />
+      </main>
+      <Footer />
+      <CartDrawer />
+    </CartProvider>
+  )
+}
 
-export default App;
+export default App
