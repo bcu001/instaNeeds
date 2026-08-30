@@ -6,6 +6,7 @@ import productRouter from './routes/product.routes.js';
 import cors from 'cors';
 import orderRouter from './routes/order.routes.js';
 import ENV from './config/env.js';
+import cartRouter from './routes/cart.routes.js';
 
 
 const app = express();
@@ -23,5 +24,6 @@ app.use(`/${apiVersion}/auth`, authRouter);
 app.use(`/${apiVersion}/users`, userRouter);
 app.use(`/${apiVersion}/products`, productRouter);
 app.use(`/${apiVersion}/orders`, orderRouter);
+app.use(`/${apiVersion}/cart`, cartRouter);
 
 export default app;
