@@ -1,74 +1,39 @@
 import Order from "../models/order.model.js"
+import apiResponse from "../utils/apiResponse.js";
 
 export const createOrder = async (req, res) => {
     try {
-        const { items, address } = req.body;
-
         const newOrder = await Order.create({
             ...req.body,
             userId: req.user._id,
         })
-
-        return res.status(200).json({
-            success: true,
-            data: {
-                order: newOrder
-            }
-        })
+        return apiResponse(res,"order created",200, {order:newOrder});
     } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: error.message
-        })
+        console.error("Error at createOrder",error);
+        return apiResponse(res,"Error at createOrder",500);
     }
 }
 export const getUserOrders = async (req, res) => {
     try {
         const { id } = req.params;
-        if (!req.user._id === id) {
-            const error = new Error("id not match with token");
-            error.statusCode = 401;
-            throw error;
-        }
+        if (!req.user._id === id) return apiResponse(res, "access denied!", 401) 
 
         const userOrders = await Order.find({ userId: id })
-
-        return res.status(200).json({
-            success: true,
-            data: {
-                orders: userOrders,
-            }
-        })
-
+        return apiResponse(res, "orders found", 200, {orders:userOrders});
     } catch (error) {
-        const status = error.statusCode || 500;
-
-        return res.status(status).json({
-            success: false,
-            message: error.message
-        })
+        console.error("Error at getUserOrders",error);
+        return apiResponse(res,"Error at getUserOrders",500);
     }
 }
 export const getUserOrderById = async (req, res) => {
     try {
         const { orderId } = req.params;
-
         const order = await Order.findById(orderId);
-
-        return res.status(200).json({
-            success: true,
-            data: {
-                order
-            }
-        })
+        return apiResponse(res, "order found", 200, {order});
 
     } catch (error) {
-        const status = error.statusCode || 500;
-
-        return res.status(status).json({
-            success: false,
-            message: error.message
-        })
+       console.error("Error at getUserOrderById",error);
+        return apiResponse(res,"Error at getUserOrderById",500);
     }
 }
 export const updateOrderStatus = async (req, res) => { }
