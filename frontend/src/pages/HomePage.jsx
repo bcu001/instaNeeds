@@ -1,27 +1,24 @@
-import { useEffect, useState } from "react"
 import { Link } from "react-router"
-import { getCategories, getFeaturedProducts } from "@/services/productService"
 import ProductCard from "@/components/product/ProductCard"
 import CategoryCard from "@/components/category/CategoryCard"
 import LoadingUI from "@/components/common/LoadingUI"
 import { formatPrice } from "@/data/mockData"
+import { useQuery } from "@tanstack/react-query"
+import { getFeaturedProducts } from "@/services/product.service"
+import { getCategories } from "@/services/category.service"
+import { useState } from "react"
 
 const HomePage = () => {
-	const [featured, setFeatured] = useState([])
-	const [loadingFeatured, setLoadingFeatured] = useState(true)
-	const [categories, setCategories] = useState([])
+	const [page,setPage] = useState(1)
+	const {data, isLoading} = useQuery({
+		queryKey:["getFeaturedProducts"],
+		queryFn:getFeaturedProducts
+	})
 
-	useEffect(() => {
-		let active = true
-		getFeaturedProducts().then((res) => {
-			if (active) {
-				setFeatured(res)
-				setLoadingFeatured(false)
-			}
-		})
-		getCategories().then((res) => active && setCategories(res))
-		return () => { active = false }
-	}, [])
+	const {data:categoriesData, isSuccess} = useQuery({
+		queryKey:["getCategories",page],
+		queryFn:getCategories
+	})
 
 	return (
 		<>
@@ -100,10 +97,18 @@ const HomePage = () => {
 					<Link to="/products" className="btn btn-ghost btn-sm text-primary">View all →</Link>
 				</div>
 				<div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-					{categories.map((c) => (
+					{isSuccess && categoriesData?.categories.map((c) => (
 						<CategoryCard key={c.slug} category={c} />
 					))}
 				</div>
+				<div className='mt-10 flex items-center justify-center gap-4'>
+					<button disabled={page===1}  onClick={()=> setPage(prev=> prev-1)} className='btn btn-outline btn-sm rounded-full disabled:opacity-40'>Prev</button>
+					<span className="text-sm text-base-content/55">
+						Page <span className="font-semibold text-base-content">{page}</span> of {categoriesData?.totalPages}
+					</span>
+					<button disabled={page >= categoriesData?.totalPages} onClick={()=> setPage(prev=> prev+1)} className='btn btn-outline btn-sm rounded-full disabled:opacity-40'>Next</button>
+				
+			</div>
 			</section>
 
 			{/* ── Featured products ─────────────────────────────────── */}
@@ -116,11 +121,11 @@ const HomePage = () => {
 					<Link to="/products?sort=price-asc" className="btn btn-ghost btn-sm text-primary">View all →</Link>
 				</div>
 				<div className="mt-5">
-					{loadingFeatured ? (
+					{isLoading ? (
 						<div className="grid place-items-center py-16"><LoadingUI /></div>
 					) : (
 						<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-							{featured.map((p) => (
+							{data?.products.map((p) => (
 								<ProductCard key={p._id} product={p} />
 							))}
 						</div>
