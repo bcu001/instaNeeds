@@ -1,7 +1,6 @@
 import { Link, useParams } from "react-router"
 // import { getProductById, getRelatedProducts } from "@/services/productService"
 import ProductImage from "@/components/product/ProductImage"
-import ProductCard from "@/components/product/ProductCard"
 import QuantityStepper from "@/components/product/QuantityStepper"
 import LoadingUI from "@/components/common/LoadingUI"
 import { useCart } from "@/context/CartContext"
@@ -14,7 +13,6 @@ const ProductDetailPage = () => {
 	const { id } = useParams()
 	const { addItem, getQty, openDrawer } = useCart()
 	const qty = getQty(id)
-	const qty2 = 0;
 
 	// const [related, setRelated] = useState([])
 	const checkdata = ()=> {

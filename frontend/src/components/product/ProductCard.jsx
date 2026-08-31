@@ -3,10 +3,18 @@ import ProductImage from "./ProductImage"
 import QuantityStepper from "./QuantityStepper"
 import { useCart } from "@/context/CartContext"
 import { formatPrice } from "@/data/mockData"
+import { useQuery } from "@tanstack/react-query"
+import { getCategoryById } from "@/services/category.service"
 
 const ProductCard = ({ product }) => {
 	const { addItem, isInCart } = useCart()
 	const inCart = isInCart(product._id)
+
+	
+	const {data:categoryData, isSuccess} = useQuery({
+		queryKey:["getCategoryById", product.category],
+		queryFn:getCategoryById
+	})
 
 	return (
 		<div className="group card overflow-hidden rounded-box border border-base-200 bg-base-100 transition duration-200 hover:-translate-y-0.5 hover:border-base-300 hover:shadow-md">
@@ -27,9 +35,9 @@ const ProductCard = ({ product }) => {
 			</Link>
 
 			<div className="flex flex-1 flex-col gap-1 p-3">
-				<p className="text-[11px] font-medium uppercase tracking-wider text-base-content/50">
-					{product.category.replace("-", " & ")}
-				</p>
+				{isSuccess && <p className="text-[11px] font-medium uppercase tracking-wider text-base-content/50">
+					{categoryData?.category.categoryName}
+				</p>}
 				<Link to={`/products/${product._id}`}>
 					<h3 className="line-clamp-2 text-sm font-semibold leading-snug hover:text-primary">
 						{product.title}

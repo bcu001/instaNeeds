@@ -39,14 +39,6 @@ const ProductsPage = () => {
 		queryKey: ["getProducts", page, searchQuery],
 		queryFn: getProducts
 	})
-	
-	console.log("render", {
-  page,
-  search,
-  searchQuery,
-  isPending,
-  hasData: !!data,
-});
 		
 		return (
 			<div className="mx-auto max-w-7xl p-4">
@@ -60,7 +52,7 @@ const ProductsPage = () => {
 						className="input join-item w-full bg-base-200 placeholder:text-base-content/40"
 						{...register("q",{ required: true })}
 					/>
-					{/* <button type="submit" className="btn btn-primary join-item">Search</button> */}
+					<button disabled={true} type="submit" className="btn btn-primary join-item hidden">Search</button>
 				</form>
 			</div>
 
