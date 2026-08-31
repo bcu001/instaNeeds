@@ -19,9 +19,10 @@ const productSchema = new mongoose.Schema({
         trim: true,
     },
     category: {
-        type: String,
-        enum: ["fruits-veg", "dairy", "snacks", "cold-drinks", "personal-care", "others"],
-        require: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref:"Category",
+        required: [true, "categoryId is requried"],
+        index:true
     },
     price: {
         type: Number,
@@ -38,6 +39,10 @@ const productSchema = new mongoose.Schema({
         type: Boolean,
         default: true
     }, 
+    isFeatured:{
+        type:Boolean,
+        default:false,
+    },
     unit: {
         type: String,
         required: [true, "unit type is required"],

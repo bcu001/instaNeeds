@@ -32,6 +32,22 @@ export const getProducts = async(req,res)=>{
     }
 }
 
+export const getFeaturedProduct = async(req,res)=>{
+    try {
+        const limit = Math.min(Math.max(req.query.limit, 1), 10);
+        const featuredProducts = await Product.find({isFeatured:true}).limit(limit);
+        if(featuredProducts.length === 0) return apiResponse(res, "no featured products found", 200);
+        return apiResponse(res, "featured product found",200,{
+            productCount: featuredProducts.length,
+            limit,
+            products:featuredProducts,
+        })
+    } catch (error) {
+        console.error("Error at getFeaturedProduct",error);
+        return apiResponse(res,"Error at getFeaturedProduct", error);
+    }
+}
+
 export const createProduct = async (req, res) => {
     try {
         const {product} = req.body;
@@ -108,5 +124,11 @@ export const getProductsByCategory = async (req, res) => {
 
 export const bulkUploadProducts = (req, res) => {
     // upload multiple products (json) (only admins)
+    try {
+        return apiResponse(res,"api is not ready", 404);
+    } catch (error) {
+        console.error("Error at bulkUpLoadProduct",error)
+        apiResponse(res,"Error at bulkUploadProducts")
+    }
 }
 
