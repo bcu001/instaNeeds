@@ -7,7 +7,7 @@ const authorizeAdmin = (req,res,next)=>{
         next();
     } catch(error){
         console.error("Error at Admin authorization", error);
-        return apiResponse(res,"Error at Admin authorization", 500);
+        return apiResponse(res,"Error at Admin authorization", 401);
     }
 }
 
