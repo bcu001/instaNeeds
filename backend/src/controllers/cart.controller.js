@@ -2,6 +2,23 @@ import Cart from "../models/cart.model.js";
 import Product from "../models/product.model.js";
 import apiResponse from "../utils/apiResponse.js";
 
+export const getCart = async(req,res)=>{
+    try {
+        const {_id} = req.user;
+        const cart = await Cart.find({userId:_id});
+        if(!cart[0]) {
+            const userCart = await Cart.create({
+                userId:_id,
+                items:[]
+            })
+            return apiResponse(res, "cart created",201, {cart:userCart})
+        }
+        return apiResponse(res, "cart found",200, {cart: cart[0]})
+    } catch (error) {
+        console.error("Error at getCart", error);
+        return apiResponse(res,"Error at getCart", 500);
+    }
+}
 
 export const addToCart = async(req,res)=>{
     try{
