@@ -3,11 +3,13 @@ import { useCart } from "@/context/CartContext"
 import { formatPrice } from "@/data/mockData"
 import ProductImage from "@/components/product/ProductImage"
 import QuantityStepper from "@/components/product/QuantityStepper"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 const FREE_DELIVERY_ABOVE = 199
 const DELIVERY_FEE = 39
 
 const CartPage = () => {
+	useDocumentTitle("Cart | InstaNeeds");
 	const { items, updateQty, removeItem, clearCart, subtotal, itemCount } = useCart()
 	const navigate = useNavigate()
 

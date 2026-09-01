@@ -3,12 +3,14 @@ import { useCart } from "@/context/CartContext"
 import { formatPrice } from "@/data/mockData"
 import ProductImage from "@/components/product/ProductImage"
 import QuantityStepper from "@/components/product/QuantityStepper"
+import useCartContext from "@/hooks/useCartContext"
 
 const FREE_DELIVERY_ABOVE = 199
 const DELIVERY_FEE = 39
 
 const CartDrawer = () => {
 	const { items, isDrawerOpen, closeDrawer, removeItem, subtotal, itemCount } = useCart()
+	const {cart, addToCart, removeFromCart, isDrawerOpen:isDrawerOpenV2, openDrawer, closeDrawer:closeDrawerV2} = useCartContext();
 	const navigate = useNavigate()
 
 	if (!isDrawerOpen) return null

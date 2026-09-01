@@ -3,22 +3,16 @@ import ProductCard from "@/components/product/ProductCard"
 import CategoryCard from "@/components/category/CategoryCard"
 import LoadingUI from "@/components/common/LoadingUI"
 import { formatPrice } from "@/data/mockData"
-import { useQuery } from "@tanstack/react-query"
-import { getFeaturedProducts } from "@/services/product.service"
-import { getCategories } from "@/services/category.service"
 import { useState } from "react"
+import useCategory from "@/hooks/useCategory"
+import useFeaturedProduct from "@/hooks/useFeaturedProduct"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 const HomePage = () => {
+	useDocumentTitle("Home | InstaNeeds")
 	const [page,setPage] = useState(1)
-	const {data, isLoading} = useQuery({
-		queryKey:["getFeaturedProducts"],
-		queryFn:getFeaturedProducts
-	})
-
-	const {data:categoriesData, isSuccess} = useQuery({
-		queryKey:["getCategories",page],
-		queryFn:getCategories
-	})
+	const {data, isLoading} = useFeaturedProduct();
+	const {data:categoriesData, isSuccess} = useCategory(page);
 
 	return (
 		<>

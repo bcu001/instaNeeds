@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 import ProductCard from "@/components/product/ProductCard"
 import LoadingUI from "@/components/common/LoadingUI"
-import { useQuery } from "@tanstack/react-query"
 import {useForm, useWatch} from 'react-hook-form'
 import NoSearchResultUI from "@/components/common/NoSearchResultUI"
-import { getProducts } from "@/services/product.service"
+import useProducts from "@/hooks/useProducts"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 const ProductsPage = () => {	
+	useDocumentTitle("Search Product | InstaNeeds");
 	const {register, control, reset} = useForm({
 		defaultValues: {
 			q: "",
@@ -35,10 +36,7 @@ const ProductsPage = () => {
 		});
 	}, [page]);
 
-	const {isPending, data} = useQuery({
-		queryKey: ["getProducts", page, searchQuery],
-		queryFn: getProducts
-	})
+	const {isPending, data} = useProducts(page,searchQuery);
 		
 		return (
 			<div className="mx-auto max-w-7xl p-4">

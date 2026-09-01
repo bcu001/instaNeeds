@@ -3,18 +3,13 @@ import ProductImage from "./ProductImage"
 import QuantityStepper from "./QuantityStepper"
 import { useCart } from "@/context/CartContext"
 import { formatPrice } from "@/data/mockData"
-import { useQuery } from "@tanstack/react-query"
-import { getCategoryById } from "@/services/category.service"
+import useCategoryById from "@/hooks/useCategoryById"
 
 const ProductCard = ({ product }) => {
 	const { addItem, isInCart } = useCart()
 	const inCart = isInCart(product._id)
-
 	
-	const {data:categoryData, isSuccess} = useQuery({
-		queryKey:["getCategoryById", product.category],
-		queryFn:getCategoryById
-	})
+	const {data:categoryData, isSuccess} = useCategoryById(product.category);
 
 	return (
 		<div className="group card overflow-hidden rounded-box border border-base-200 bg-base-100 transition duration-200 hover:-translate-y-0.5 hover:border-base-300 hover:shadow-md">

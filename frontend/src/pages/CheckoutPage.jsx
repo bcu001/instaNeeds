@@ -5,6 +5,7 @@ import toast from "react-hot-toast"
 import { useCart } from "@/context/CartContext"
 import { formatPrice } from "@/data/mockData"
 import ProductImage from "@/components/product/ProductImage"
+import useDocumentTitle from "@/hooks/useDocumentTitle"
 
 const FREE_DELIVERY_ABOVE = 199
 const DELIVERY_FEE = 39
@@ -22,6 +23,7 @@ const PAYMENT_METHODS = [
 ]
 
 const CheckoutPage = () => {
+	useDocumentTitle("Checkout | InstaNeeds");
 	const { items, subtotal, itemCount, clearCart } = useCart()
 	const navigate = useNavigate()
 	const [step, setStep] = useState(1) // 1 = details, 2 = payment, 3 = success
