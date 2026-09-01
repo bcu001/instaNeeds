@@ -1,11 +1,11 @@
 import { useState } from "react"
-import { Link, Navigate, useNavigate } from "react-router"
+import { Link, Navigate } from "react-router"
 import { useForm } from "react-hook-form"
 import toast from "react-hot-toast"
-import { useCart } from "@/context/CartContext"
 import { formatPrice } from "@/data/mockData"
-import ProductImage from "@/components/product/ProductImage"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
+import useCartContext from "@/hooks/useCartContext"
+import CartCard from "@/components/cart/CartCard"
 
 const FREE_DELIVERY_ABOVE = 199
 const DELIVERY_FEE = 39
@@ -24,8 +24,7 @@ const PAYMENT_METHODS = [
 
 const CheckoutPage = () => {
 	useDocumentTitle("Checkout | InstaNeeds");
-	const { items, subtotal, itemCount, clearCart } = useCart()
-	const navigate = useNavigate()
+	const {cartData, clearCart} = useCartContext();
 	const [step, setStep] = useState(1) // 1 = details, 2 = payment, 3 = success
 	const [slot, setSlot] = useState("now")
 	const [payment, setPayment] = useState("upi")
@@ -36,12 +35,12 @@ const CheckoutPage = () => {
 		formState: { errors },
 	} = useForm({ mode: "onTouched" })
 
-	if (items.length === 0 && step !== 3) {
+	if (cartData?.cart?.items.length === 0 && step !== 3) {
 		return <Navigate to="/cart" replace />
 	}
 
-	const deliveryFee = subtotal >= FREE_DELIVERY_ABOVE ? 0 : DELIVERY_FEE
-	const total = subtotal + deliveryFee
+	const deliveryFee = cartData?.totalPrice >= FREE_DELIVERY_ABOVE ? 0 : DELIVERY_FEE
+	const total = cartData?.totalPrice + deliveryFee
 	const orderId = `IN${Math.floor(100000 + Math.random() * 900000)}`
 
 	const onSubmitDetails = () => setStep(2)
@@ -229,21 +228,13 @@ const CheckoutPage = () => {
 				<aside className="h-fit rounded-box border border-base-200 bg-base-100 p-5 lg:sticky lg:top-24">
 					<h2 className="text-base font-bold">Order summary</h2>
 					<ul className="mt-4 max-h-72 divide-y divide-base-200 overflow-y-auto">
-						{items.map((i) => (
-							<li key={i._id} className="flex items-center gap-3 py-3">
-								<ProductImage src={i.imageURL} alt={i.title} emoji={i.emoji} className="h-12 w-12 rounded-lg" />
-								<span className="min-w-0 flex-1">
-									<span className="block truncate text-sm font-semibold">{i.title}</span>
-									<p className="text-xs text-base-content/55">{i.qty} × {formatPrice(i.price)}</p>
-								</span>
-								<span className="text-sm font-semibold">{formatPrice(i.price * i.qty)}</span>
-							</li>
-						))}
+						{cartData?.cart?.items.map((i) => <CartCard item={i}/>
+						)}
 					</ul>
 					<dl className="mt-4 space-y-2.5 text-sm">
 						<div className="flex justify-between">
-							<dt className="text-base-content/60">Subtotal ({itemCount} item{itemCount > 1 ? "s" : ""})</dt>
-							<dd className="font-medium">{formatPrice(subtotal)}</dd>
+							<dt className="text-base-content/60">subtotal ({cartData?.totalItems} item{cartData?.totalItems > 1 ? "s" : ""})</dt>
+							<dd className="font-medium">{formatPrice(cartData?.totalPrice)}</dd>
 						</div>
 						<div className="flex justify-between">
 							<dt className="text-base-content/60">Delivery fee</dt>

@@ -1,13 +1,13 @@
 import { Link } from "react-router"
 import ProductImage from "./ProductImage"
 import QuantityStepper from "./QuantityStepper"
-import { useCart } from "@/context/CartContext"
 import { formatPrice } from "@/data/mockData"
 import useCategoryById from "@/hooks/useCategoryById"
+import useCartContext from "@/hooks/useCartContext"
 
 const ProductCard = ({ product }) => {
-	const { addItem, isInCart } = useCart()
-	const inCart = isInCart(product._id)
+	const {addToCart, isProdcutInCart} = useCartContext();
+	const inCart = isProdcutInCart(product._id)
 	
 	const {data:categoryData, isSuccess} = useCategoryById(product.category);
 
@@ -29,7 +29,7 @@ const ProductCard = ({ product }) => {
 				) : null}
 			</Link>
 
-			<div className="flex flex-1 flex-col gap-1 p-3">
+			<div className="flex flex-1 flex-col gap-1 p-3 justify-between">
 				{isSuccess && <p className="text-[11px] font-medium uppercase tracking-wider text-base-content/50">
 					{categoryData?.category.categoryName}
 				</p>}
@@ -55,7 +55,7 @@ const ProductCard = ({ product }) => {
 					) : (
 						<button
 							type="button"
-							onClick={() => addItem(product)}
+							onClick={() => addToCart(product._id)}
 							className="btn btn-primary btn-sm h-8 min-h-8 rounded-full px-4"
 						>
 							Add

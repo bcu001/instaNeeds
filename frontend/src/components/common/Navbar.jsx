@@ -1,12 +1,12 @@
 import { Link } from "react-router"
-import { useCart } from "@/context/CartContext"
 import { categories } from "@/data/mockData"
 import { ShoppingCart } from "lucide-react"
 import { Search } from "lucide-react"
 import { Menu } from "lucide-react"
+import useCartContext from "@/hooks/useCartContext"
 
 const Navbar = () => {
-	const { itemCount, openDrawer } = useCart()
+	const {cartData, openDrawer} = useCartContext();
 
 	return (
 		<header className="sticky top-0 z-40 border-b border-base-200 bg-base-100/90 backdrop-blur">
@@ -28,12 +28,12 @@ const Navbar = () => {
 						type="button"
 						onClick={openDrawer}
 						className="btn btn-ghost btn-circle relative text-base-content"
-						aria-label={`Open cart, ${itemCount} items`}
+						aria-label={`Open cart, ${cartData?.totalItems} items`}
 					>
 						<ShoppingCart />
-						{itemCount > 0 ? (
+						{cartData?.totalItems > 0 ? (
 							<span className="badge badge-primary absolute -right-0.5 -top-0.5 badge-sm min-w-5 p-1 text-[10px]">
-								{itemCount}
+								{cartData?.totalItems}
 							</span>
 						) : null}
 					</button>

@@ -1,12 +1,9 @@
-import { useCart } from "@/context/CartContext"
+import useCartContext from "@/hooks/useCartContext"
 
-/**
- * Compact +/- stepper used on cards and in the cart.
- */
 const QuantityStepper = ({ productId, size = "sm" }) => {
-	const { getQty, updateQty } = useCart()
+	const {getQty, addToCart, removeFromCart} = useCartContext()
 	const qty = getQty(productId)
-
+	
 	return (
 		<div
 			className={`flex items-center rounded-full border border-base-300 bg-base-100 ${
@@ -16,7 +13,7 @@ const QuantityStepper = ({ productId, size = "sm" }) => {
 			<button
 				type="button"
 				aria-label="Decrease quantity"
-				onClick={() => updateQty(productId, -1)}
+				onClick={() => removeFromCart(productId)}
 				className={`grid place-items-center rounded-full text-base-content/70 transition hover:bg-base-200 ${
 					size === "lg" ? "h-11 w-11" : "h-8 w-8"
 				}`}
@@ -29,7 +26,7 @@ const QuantityStepper = ({ productId, size = "sm" }) => {
 			<button
 				type="button"
 				aria-label="Increase quantity"
-				onClick={() => updateQty(productId, 1)}
+				onClick={() => addToCart(productId)}
 				className={`grid place-items-center rounded-full text-base-content/70 transition hover:bg-base-200 ${
 					size === "lg" ? "h-11 w-11" : "h-8 w-8"
 				}`}
