@@ -5,7 +5,7 @@ import ENV from "../config/env.js";
 import apiResponse from "../utils/apiResponse.js";
 import userNormalization from "../utils/userNormalization.js";
 
-export const validate = async (req, res) => {
+export const getCurrentUser = async (req, res) => {
     try {
         let token;
         if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
@@ -18,7 +18,8 @@ export const validate = async (req, res) => {
 
         return apiResponse(res, "user validated", 200,{user});
     } catch (error) {
-        return res.status(401).json({ message: error.message || "Unauthorized" });
+        console.error("Error at getCurrentUser", error)
+        return apiResponse(res,"Error at getCurrentUser", 500)
     }
 }
 
