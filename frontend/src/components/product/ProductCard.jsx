@@ -4,6 +4,7 @@ import QuantityStepper from "./QuantityStepper"
 import { formatPrice } from "@/data/mockData"
 import useCategoryById from "@/hooks/useCategoryById"
 import useCartContext from "@/hooks/useCartContext"
+import resizeImage from "@/lib/resizeImage"
 
 const ProductCard = ({ product }) => {
 	const {addToCart, isProdcutInCart} = useCartContext();
@@ -16,7 +17,7 @@ const ProductCard = ({ product }) => {
 			<Link to={`/products/${product._id}`} className="relative block">
 				<figure className="aspect-square overflow-hidden">
 					<ProductImage
-						src={product.imageURL}
+						src={resizeImage(product.imageURL, 400,65 )}
 						alt={product.title}
 						emoji={product.emoji}
 						className="h-full w-full transition duration-300 group-hover:scale-105"

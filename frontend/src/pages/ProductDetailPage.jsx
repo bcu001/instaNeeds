@@ -3,17 +3,18 @@ import { Link, useParams } from "react-router"
 import ProductImage from "@/components/product/ProductImage"
 import QuantityStepper from "@/components/product/QuantityStepper"
 import LoadingUI from "@/components/common/LoadingUI"
-import { useCart } from "@/context/CartContext"
 import { formatPrice } from "@/data/mockData"
 import ProductNotFoundUI from "@/components/common/ProductNotFoundUI"
 import useCategoryById from "@/hooks/useCategoryById"
 import useProductById from "@/hooks/useProductById"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
+import useCartContext from "@/hooks/useCartContext"
+import resizeImage from "@/lib/resizeImage"
 
 const ProductDetailPage = () => {
 	useDocumentTitle("Product | InstaNeeds");
 	const { id } = useParams()
-	const { addItem, getQty, openDrawer } = useCart()
+	const {addToCart, getQty, openDrawer} = useCartContext();
 	const qty = getQty(id)
 	// const [related, setRelated] = useState([])
 	// const discount = 20
@@ -42,7 +43,7 @@ const ProductDetailPage = () => {
 				<div className="lg:sticky lg:top-24 lg:self-start">
 					<div className="overflow-hidden rounded-box border border-base-200 bg-base-100">
 						<ProductImage
-							src={productData?.product.imageURL}
+							src={resizeImage(productData?.product.imageURL,800,70)}
 							alt={productData?.product.title}
 							emoji={productData?.product.emoji}
 							className="aspect-square w-full"
@@ -91,7 +92,7 @@ const ProductDetailPage = () => {
 								disabled={outOfStock}
 								className="btn btn-primary h-11 rounded-full px-8"
 								onClick={() => {
-									addItem(productData?.product)
+									addToCart(productData?.product._id)
 									openDrawer()
 								}}
 							>
