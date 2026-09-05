@@ -8,16 +8,20 @@ import orderRouter from './routes/order.routes.js';
 import ENV from './config/env.js';
 import cartRouter from './routes/cart.routes.js';
 import categoryRouter from './routes/category.routes.js';
-
+import morgan from 'morgan'
+import helmet from 'helmet'
 
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
 app.use(
     cors({
-        origin: ENV.CLIENT_URL
+        origin: ENV.CLIENT_URL,
+        credentials:true
     })
 )
+app.use(morgan("dev"))
+app.use(helmet())
 
 const apiVersion = "api/v1";
 
