@@ -11,6 +11,7 @@ import categoryRouter from './routes/category.routes.js';
 import morgan from 'morgan'
 import helmet from 'helmet'
 import { errorHandler, notFound } from './middleware/error.middleware.js';
+import rateLimiter from "./middleware/rateLimiter.middleware.js"
 
 const app = express();
 app.use(express.json());
@@ -23,6 +24,7 @@ app.use(
 )
 app.use(morgan("dev"))
 app.use(helmet())
+app.use(rateLimiter);
 
 const apiVersion = "api/v1";
 
