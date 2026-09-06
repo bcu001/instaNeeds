@@ -4,9 +4,13 @@ import { ShoppingCart } from "lucide-react"
 import { Search } from "lucide-react"
 import { Menu } from "lucide-react"
 import useCartContext from "@/hooks/useCartContext"
+import useAuth from "@/hooks/useAuth"
+import { LogIn } from "lucide-react"
+import { LogOut } from "lucide-react"
 
 const Navbar = () => {
 	const {cartData, openDrawer} = useCartContext();
+	const {isAuthenticated,signoutHandler} = useAuth();
 
 	return (
 		<header className="sticky top-0 z-40 border-b border-base-200 bg-base-100/90 backdrop-blur">
@@ -27,7 +31,7 @@ const Navbar = () => {
 					<button
 						type="button"
 						onClick={openDrawer}
-						className="btn btn-ghost btn-circle relative text-base-content"
+						className={`btn btn-ghost btn-circle relative text-base-content ${isAuthenticated || "hidden"}`}
 						aria-label={`Open cart, ${cartData?.totalItems} items`}
 					>
 						<ShoppingCart />
@@ -37,6 +41,14 @@ const Navbar = () => {
 							</span>
 						) : null}
 					</button>
+
+					{!isAuthenticated && <Link className="btn btn-ghost btn-circle relative text-base-content " to={`/signin`}>
+						<LogIn/>
+					</Link>}
+
+					{isAuthenticated && <button className="btn btn-ghost btn-circle relative text-base-content " onClick={signoutHandler}>
+						<LogOut/>
+						</button>}
 
 					{/* mobile menu */}
 					<div className="dropdown dropdown-end md:hidden">
@@ -52,7 +64,7 @@ const Navbar = () => {
 									</Link>
 								</li>
 							))}
-							<li className="mt-2"><Link to="/cart">🛒 My cart</Link></li>
+							{isAuthenticated && <li className="mt-2"><Link to="/cart">🛒 My cart</Link></li>}
 						</ul>
 					</div>
 				</nav>
