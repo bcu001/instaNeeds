@@ -3,17 +3,21 @@ import { formatPrice } from "@/data/mockData"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
 import useCartContext from "@/hooks/useCartContext"
 import CartCard from "@/components/cart/CartCard"
+import ApiErrorUI from "@/components/common/ApiErrorUI"
+import { getApiErrorMessage } from "@/lib/apiError"
 
 const FREE_DELIVERY_ABOVE = 199
 const DELIVERY_FEE = 39
 
 const CartPage = () => {
 	useDocumentTitle("Cart | InstaNeeds");
-	const {cartData} = useCartContext();
+	const {cartData, isError, error, refetch} = useCartContext();
 	const navigate = useNavigate()
 
 	const deliveryFee = cartData?.cart?.items.length === 0 || cartData?.totalPrice >= FREE_DELIVERY_ABOVE ? 0 : DELIVERY_FEE
 	const total = cartData?.totalPrice + deliveryFee
+
+	if (isError) return <ApiErrorUI message={getApiErrorMessage(error, "Unable to load cart")} onRetry={refetch} />
 
 	if (cartData?.cart?.items.length === 0) {
 		return (

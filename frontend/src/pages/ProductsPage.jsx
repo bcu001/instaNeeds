@@ -5,6 +5,8 @@ import {useForm, useWatch} from 'react-hook-form'
 import NoSearchResultUI from "@/components/common/NoSearchResultUI"
 import useProducts from "@/hooks/useProducts"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
+import ApiErrorUI from "@/components/common/ApiErrorUI"
+import { getApiErrorMessage } from "@/lib/apiError"
 
 const ProductsPage = () => {	
 	useDocumentTitle("Search Product | InstaNeeds");
@@ -36,7 +38,7 @@ const ProductsPage = () => {
 		});
 	}, [page]);
 
-	const {isPending, data} = useProducts(page,searchQuery);
+	const {isPending, data, isError, error, refetch} = useProducts(page,searchQuery);
 		
 		return (
 			<div className="mx-auto max-w-7xl p-4">
@@ -57,6 +59,7 @@ const ProductsPage = () => {
 			{/* grid */}
 			<div className="mt-6">
 				{isPending && <div className="grid place-items-center py-24"><LoadingUI /></div>}
+				{isError && <ApiErrorUI message={getApiErrorMessage(error, "Unable to load products")} onRetry={refetch} />}
 				{data?.products.length === 0 && <NoSearchResultUI reset={reset}/>}
 				<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
 					{data?.products.length > 0 && data?.products.map((p) => (

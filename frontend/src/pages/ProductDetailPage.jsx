@@ -10,6 +10,8 @@ import useProductById from "@/hooks/useProductById"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
 import useCartContext from "@/hooks/useCartContext"
 import resizeImage from "@/lib/resizeImage"
+import ApiErrorUI from "@/components/common/ApiErrorUI"
+import { getApiErrorMessage } from "@/lib/apiError"
 
 const ProductDetailPage = () => {
 	useDocumentTitle("Product | InstaNeeds");
@@ -19,12 +21,13 @@ const ProductDetailPage = () => {
 	// const [related, setRelated] = useState([])
 	// const discount = 20
 
-	const {data:productData, isPending} = useProductById(id);
+	const {data:productData, isPending, isError, error, refetch} = useProductById(id);
 	const {data:categoryData} = useCategoryById(productData?.product.category)
 
 	const outOfStock = productData?.product.stock === 0
 
 	if (isPending) return <div className="grid min-h-[50vh] place-items-center"><LoadingUI /></div>
+	if (isError) return <ApiErrorUI message={getApiErrorMessage(error, "Unable to load product")} onRetry={refetch} />
 	if (!productData?.product) return <ProductNotFoundUI/>
 
 	return (

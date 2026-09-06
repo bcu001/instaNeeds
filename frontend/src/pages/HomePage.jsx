@@ -7,12 +7,14 @@ import { useState } from "react"
 import useCategory from "@/hooks/useCategory"
 import useFeaturedProduct from "@/hooks/useFeaturedProduct"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
+import ApiErrorUI from "@/components/common/ApiErrorUI"
+import { getApiErrorMessage } from "@/lib/apiError"
 
 const HomePage = () => {
 	useDocumentTitle("Home | InstaNeeds")
 	const [page,setPage] = useState(1)
-	const {data, isLoading} = useFeaturedProduct();
-	const {data:categoriesData, isSuccess} = useCategory(page);
+	const {data, isLoading, isError: featuredError, error: featuredErrorDetails, refetch: refetchFeatured} = useFeaturedProduct();
+	const {data:categoriesData, isSuccess, isError: categoriesError, error: categoriesErrorDetails, refetch: refetchCategories} = useCategory(page);
 
 	return (
 		<>
@@ -91,6 +93,7 @@ const HomePage = () => {
 					<Link to="/products" className="btn btn-ghost btn-sm text-primary">View all →</Link>
 				</div>
 				<div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+					{categoriesError && <ApiErrorUI message={getApiErrorMessage(categoriesErrorDetails, "Unable to load categories")} onRetry={refetchCategories} />}
 					{isSuccess && categoriesData?.categories.map((c) => (
 						<CategoryCard key={c.slug} category={c} />
 					))}
@@ -115,7 +118,9 @@ const HomePage = () => {
 					<Link to="/products?sort=price-asc" className="btn btn-ghost btn-sm text-primary">View all →</Link>
 				</div>
 				<div className="mt-5">
-					{isLoading ? (
+					{featuredError ? (
+						<ApiErrorUI message={getApiErrorMessage(featuredErrorDetails, "Unable to load featured products")} onRetry={refetchFeatured} />
+					) : isLoading ? (
 						<div className="grid place-items-center py-16"><LoadingUI /></div>
 					) : (
 						<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
