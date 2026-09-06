@@ -1,6 +1,5 @@
-import axios from "axios"
+import api from "@/lib/axios"
 import { products, categories } from "@/data/mockData"
-import { server_url } from "@/lib/env"
 
 /**
  * Product service — the ONLY place that knows where data comes from.
@@ -11,7 +10,6 @@ import { server_url } from "@/lib/env"
  */
 
 const USE_MOCK = false
-const API_BASE = server_url;
 const PAGE_SIZE = 12
 
 const wait = (ms = 250) => new Promise((resolve) => setTimeout(resolve, ms))
@@ -59,7 +57,7 @@ async function mockSearch({ q = "", category = "", sort = "relevance", page = 1 
 export async function getProducts(params = {}) {
 	if (USE_MOCK) return mockSearch(params)
 
-	const res = await axios.get(`${API_BASE}/products`,{
+	const res = await api.get(`/products`,{
 			params:{
 			page:params.page,
 			q: params.searchQuery || undefined
@@ -73,8 +71,8 @@ export async function getProducts(params = {}) {
 export async function getProductById(id) {
 	if (USE_MOCK) return products.find((p) => p._id === id)
 
-	const res = await axios.get(`${API_BASE}/products/${id}`)
-	return res.data.data.existingProduct
+	const res = await api.get(`/products/${id}`)
+	return res.data?.data
 }
 
 /** @returns {Promise<typeof categories>} */
