@@ -9,10 +9,11 @@ import Session from "../models/session.model.js";
 import mongoose from "mongoose";
 
 const refreshCookieOptions = {
-    httpOnly: true,
-    secure: ENV.CLIENT_URL.startsWith("https://"),
-    sameSite: "strict",
-    maxAge: 7 * 24 * 60 * 60 * 1000,
+  httpOnly: true,
+  secure: ENV.CLIENT_URL.startsWith("https://"),
+  sameSite: ENV.CLIENT_URL.startsWith("https://") ? "none" : "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: "/",
 };
 
 export const getCurrentUser = async (req, res) => {
