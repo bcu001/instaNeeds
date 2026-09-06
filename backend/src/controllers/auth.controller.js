@@ -52,7 +52,7 @@ export const signIn = async (req, res) => {
     try {
         const { email, password } = req.body;
         const existingUser = await User.findOne({ email }).select("+password");
-        if (!existingUser) return apiResponse(res, "No match found for data", 404)
+        if (!existingUser) return apiResponse(res, "Invalid email or password", 401)
 
         const validPassword = await bcrypt.compare(password, existingUser.password);
         if (!validPassword) return apiResponse(res, "password is wrong", 401)
@@ -87,7 +87,7 @@ export const signOut = async (req, res) => {
             _id: decoded.sessionId,
             revoked:false
         })
-        if(!session) return apiResponse(res,"invalid refresh token",400)
+        if(!session) return apiResponse(res,"invalid refresh token",401)
         session.revoked = true,
         await session.save()
         res.clearCookie("refreshToken");
@@ -133,7 +133,7 @@ export const refreshToken = async(req,res)=>{
 export const signoutAll = async(req,res)=>{
     try{
         const refreshToken = req.cookies.refreshToken;
-        if(!refreshToken) return apiResponse(res,"refresh token not found", 400);    
+        if(!refreshToken) return apiResponse(res,"refresh token not found", 401);    
 
         const decoded = jwt.verify(refreshToken, ENV.JWT_REFRESH_SECRET);
         await Session.updateMany({

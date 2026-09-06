@@ -13,11 +13,11 @@ export const getProducts = async(req,res)=>{
         const totalProducts = await Product.countDocuments(search);
         const limit = 20;
         const totalPages = Math.ceil(totalProducts/limit);
-        if(page > totalProducts && totalProducts > 0) return apiResponse(res, `page ${page} does not exist`,400);
+        if(page > totalPages && totalProducts > 0) return apiResponse(res, `page ${page} does not exist`,400);
 
         const skip = (page - 1) * limit;
         const products = await Product.find(search).limit(limit).skip(skip);
-        if(products.length < 0) return apiResponse(res,"no product found",404, products);
+        if(products.length === 0) return apiResponse(res,"no product found",404);
         return apiResponse(res, "products found", 200, {
             totalProducts,
             currPage: page,
@@ -34,7 +34,7 @@ export const getProducts = async(req,res)=>{
 
 export const getFeaturedProduct = async(req,res)=>{
     try {
-        const limit = Math.min(Math.max(req.query.limit, 1), 10);
+        const limit = Math.min(Math.max(Number(req.query.limit) || 8, 1), 10);
         const featuredProducts = await Product.find({isFeatured:true}).limit(limit);
         if(featuredProducts.length === 0) return apiResponse(res, "no featured products found", 200);
         return apiResponse(res, "featured product found",200,{
@@ -44,14 +44,14 @@ export const getFeaturedProduct = async(req,res)=>{
         })
     } catch (error) {
         console.error("Error at getFeaturedProduct",error);
-        return apiResponse(res,"Error at getFeaturedProduct", error);
+        return apiResponse(res,"Error at getFeaturedProduct", 500);
     }
 }
 
 export const createProduct = async (req, res) => {
     try {
         const {product} = req.body;
-        const newProduct = new Product.create(product);
+        const newProduct = await Product.create(product);
         return apiResponse(res,"product added to db", 201,{newProduct});
     } catch (error) {
         console.error("Error at createProduct",error);
@@ -73,11 +73,12 @@ export const getProductById = async (req, res) => {
 export const updateProduct = async(req, res) => {
      try{
         const {product} = req.body;
-        const updatedProduct = await Product.findByIdAndUpdate(req.params.id,{product});
-        return apiResponse(res,"product deleted", 200,{updatedProduct});
+        const updatedProduct = await Product.findByIdAndUpdate(req.params.id, product, { new: true, runValidators: true });
+        if (!updatedProduct) return apiResponse(res, "No product found", 404);
+        return apiResponse(res,"product updated", 200,{product:updatedProduct});
     } catch (error){
-        console.error("Error at deleteProduct",error);
-        return apiResponse(res,"error at deleteProduct",500);
+        console.error("Error at updateProduct",error);
+        return apiResponse(res,"Error at updateProduct",500);
     }
 }
 
@@ -107,18 +108,11 @@ export const getProductsByCategory = async (req, res) => {
             throw error;
         }
 
-        res.status(200).json({
-            success: true,
-            data: {
-                productList
-            }
-        })
+        return apiResponse(res, "products found", 200, { productList })
 
     } catch (error) {
-        return res.json({
-            success: false,
-            message: error.message
-        })
+        console.error("Error at getProductsByCategory", error);
+        return apiResponse(res, "Error at getProductsByCategory", 500);
     }
 }
 
@@ -128,7 +122,7 @@ export const bulkUploadProducts = (req, res) => {
         return apiResponse(res,"api is not ready", 404);
     } catch (error) {
         console.error("Error at bulkUpLoadProduct",error)
-        apiResponse(res,"Error at bulkUploadProducts")
+        return apiResponse(res,"Error at bulkUploadProducts", 500)
     }
 }
 

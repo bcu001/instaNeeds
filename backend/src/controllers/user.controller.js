@@ -4,7 +4,7 @@ import userNormalization from "../utils/userNormalization.js";
 
 export const getUsers = async (req, res) => {
     try {
-        if (req.user.role !== 'admin') return apiResponse(res,"you don't have admin rights",401); 
+        if (req.user.role !== 'admin') return apiResponse(res,"you don't have admin rights",403); 
         const userData = await User.find().select("-__v -updatedAt");
         if (userData.length === 0) return apiResponse(res, "no users in db",404);
         return apiResponse(res, "users found",200, userData);

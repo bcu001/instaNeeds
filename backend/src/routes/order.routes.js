@@ -6,7 +6,7 @@ const orderRouter = Router();
 
 orderRouter.post("/create", authorize, createOrder);
 orderRouter.get("/user/:id", authorize, getUserOrders);
-orderRouter.get("/:orderId", getUserOrderById);
+orderRouter.get("/:orderId", authorize, getUserOrderById);
 
 // admin only stuff (later)
 orderRouter.put("/:orderId/status", updateOrderStatus)

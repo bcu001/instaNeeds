@@ -4,9 +4,9 @@ import nameToSlug from "../utils/nameToSlug.js";
 
 export const getCategories = async(req,res)=>{
    try{
-       const page = Number(req.query.page);
+    const page = Math.max(Number(req.query.page) || 1, 1);
        const totalCategories = await Category.countDocuments({isActive:true});
-        const limit = Math.min(Math.max(req.query.limit,1), totalCategories);
+     const limit = Math.min(Math.max(Number(req.query.limit) || 6,1), Math.max(totalCategories, 1));
         const skip = (page-1)*limit;
         const totalPages = Math.ceil(totalCategories/limit);
         const categories = await Category.find({isActive:true}).limit(limit).skip(skip).lean();

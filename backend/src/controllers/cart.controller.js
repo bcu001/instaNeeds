@@ -33,6 +33,8 @@ export const addToCart = async(req,res)=>{
         const {productId, qty} = req.body;
         const {_id} = req.user;
         const product = await Product.findById(productId);
+        if (!product) return apiResponse(res, "product not found", 404);
+        if (!Number.isInteger(qty) || qty < 1) return apiResponse(res, "quantity must be a positive integer", 400);
         const userCart = await Cart.findOne({userId:_id});
         if(!userCart) {
             const newCart = await Cart.create({
@@ -69,6 +71,7 @@ export const removeFromCart = async(req,res)=>{
         const {productId} =req.body;
         const {_id} =req.user;
         const userCart = await Cart.findOne({userId:_id});
+        if (!userCart) return apiResponse(res, "cart not found", 404);
         const existingProduct = userCart.items.find(item=>item.productId.equals(productId));
         if(!existingProduct){
             return apiResponse(res,"item not found",200, {cart:userCart});
