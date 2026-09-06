@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 import { formatPrice } from '@/data/mockData';
 import QuantityStepper from '../product/QuantityStepper';
 import useProductById from '@/hooks/useProductById';
+import resizeImage from '@/lib/resizeImage';
 
 
 const CartCard = ({item}) => {
@@ -12,7 +13,7 @@ const CartCard = ({item}) => {
   return (
     <li key={productData?.product._id} className="flex items-center gap-3 py-4">
         <Link to={`/products/${productData?.product._id}`} onClick={closeDrawer} className="shrink-0">
-            <ProductImage src={productData?.product.imageURL} alt={productData?.product.title} className="h-16 w-16 rounded-lg" />
+            <ProductImage src={resizeImage(productData?.product.imageURL)} alt={productData?.product.title} className="h-16 w-16 rounded-lg" />
         </Link>
         <div className="min-w-0 flex-1">
             <Link

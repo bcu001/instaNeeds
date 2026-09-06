@@ -71,7 +71,7 @@ const SignInPage = () => {
             />
           </label>
           <button className="btn btn-primary btn-lg" type="submit">
-            {signupPending ? "Signing in" : "Submit"}
+            {signupPending ? "Creating..." : "Submit"}
           </button>
         </form>
       </div>
