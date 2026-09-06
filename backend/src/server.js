@@ -4,10 +4,6 @@ import ENV from './config/env.js';
 
 const PORT = ENV.PORT || 8000;
 
-app.get("/", (req, res) => {
-    res.json({ message: "instaNeeds" });
-})
-
 const startServer = async()=>{
    try{
         await connectDB();

@@ -26,6 +26,10 @@ app.use(morgan("dev"))
 app.use(helmet())
 app.use(rateLimiter);
 
+app.get("/", (req, res) => {
+    res.json({ message: "instaNeeds" });
+})
+
 const apiVersion = "api/v1";
 
 app.use(`/${apiVersion}/auth`, authRouter);
