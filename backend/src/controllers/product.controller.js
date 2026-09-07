@@ -3,21 +3,22 @@ import apiResponse from "../utils/apiResponse.js";
 
 export const getProducts = async(req,res)=>{
     try{
-        const q = req.query.q;
+        const q = req.query.q?.trim()
+        const page =Math.max(Number(req.query.page) || 1,1);
+        const limit = 20;
+        const skip = (page - 1) * limit;
         const search = q ? { $or:[
                     {title:{$regex:q, $options:"i"}},
                     {description:{$regex:q,$options:"i"}}
                 ]} : {};
 
-        const page =Math.max(Number(req.query.page) || 1,1);
-        const totalProducts = await Product.countDocuments(search);
-        const limit = 20;
+        const [totalProducts,products] = await Promise.all([
+            Product.countDocuments(search),
+            Product.find(search).skip(skip).limit(limit).lean()
+        ])
         const totalPages = Math.ceil(totalProducts/limit);
-        if(page > totalPages && totalProducts > 0) return apiResponse(res, `page ${page} does not exist`,400);
+        if(page>totalPages && totalPages>0) return apiResponse(res, `page ${page} does not exist`,400) 
 
-        const skip = (page - 1) * limit;
-        const products = await Product.find(search).limit(limit).skip(skip);
-        if(products.length === 0) return apiResponse(res,"no product found",404);
         return apiResponse(res, "products found", 200, {
             totalProducts,
             currPage: page,
