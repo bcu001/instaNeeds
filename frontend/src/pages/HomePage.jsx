@@ -1,7 +1,6 @@
 import { Link } from "react-router"
 import ProductCard from "@/components/product/ProductCard"
 import CategoryCard from "@/components/category/CategoryCard"
-import LoadingUI from "@/components/common/LoadingUI"
 import { formatPrice } from "@/data/mockData"
 import { useState } from "react"
 import useCategory from "@/hooks/useCategory"
@@ -9,12 +8,14 @@ import useFeaturedProduct from "@/hooks/useFeaturedProduct"
 import useDocumentTitle from "@/hooks/useDocumentTitle"
 import ApiErrorUI from "@/components/common/ApiErrorUI"
 import { getApiErrorMessage } from "@/lib/apiError"
+import CategoryCardSkeleton from "@/components/SkeletonLoaders/CategoryCardSkeleton"
+import ProductCardSKeleton from "@/components/SkeletonLoaders/ProductCardSkeleton"
 
 const HomePage = () => {
 	useDocumentTitle("Home | InstaNeeds")
 	const [page,setPage] = useState(1)
-	const {data, isLoading, isError: featuredError, error: featuredErrorDetails, refetch: refetchFeatured} = useFeaturedProduct();
-	const {data:categoriesData, isSuccess, isError: categoriesError, error: categoriesErrorDetails, refetch: refetchCategories} = useCategory(page);
+	const {data, isError: featuredError, error: featuredErrorDetails, refetch: refetchFeatured, isPending:isFeaturedProductPending, isSuccess:isSuccessFeaturedProduct} = useFeaturedProduct();
+	const {data:categoriesData, isSuccess, isError: categoriesError, error: categoriesErrorDetails, refetch: refetchCategories, isPending} = useCategory(page);
 
 	return (
 		<>
@@ -92,11 +93,16 @@ const HomePage = () => {
 					</div>
 					<Link to="/products" className="btn btn-ghost btn-sm text-primary">View all →</Link>
 				</div>
-				<div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+				<div >
 					{categoriesError && <ApiErrorUI message={getApiErrorMessage(categoriesErrorDetails, "Unable to load categories")} onRetry={refetchCategories} />}
-					{isSuccess && categoriesData?.categories.map((c) => (
-						<CategoryCard key={c.slug} category={c} />
-					))}
+					<div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+						{isPending && Array.from({ length: 6 }).map((_, index) => (
+							<CategoryCardSkeleton key={index} />
+						))}
+						{isSuccess && categoriesData?.categories.map((c) => (
+							<CategoryCard key={c.slug} category={c} isPending={isPending}/>
+						))}
+					</div>
 				</div>
 				<div className='mt-10 flex items-center justify-center gap-4'>
 					<button disabled={page===1}  onClick={()=> setPage(prev=> prev-1)} className='btn btn-outline btn-sm rounded-full disabled:opacity-40'>Prev</button>
@@ -118,17 +124,13 @@ const HomePage = () => {
 					<Link to="/products?sort=price-asc" className="btn btn-ghost btn-sm text-primary">View all →</Link>
 				</div>
 				<div className="mt-5">
-					{featuredError ? (
-						<ApiErrorUI message={getApiErrorMessage(featuredErrorDetails, "Unable to load featured products")} onRetry={refetchFeatured} />
-					) : isLoading ? (
-						<div className="grid place-items-center py-16"><LoadingUI /></div>
-					) : (
-						<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-							{data?.products.map((p) => (
+					{featuredError && <ApiErrorUI message={getApiErrorMessage(featuredErrorDetails, "Unable to load featured products")} onRetry={refetchFeatured} />}
+					<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+							{isFeaturedProductPending && Array.from({length:8}).map((_,idx)=><ProductCardSKeleton key={idx}/>)}
+							{isSuccessFeaturedProduct && data?.products.map((p) => (
 								<ProductCard key={p._id} product={p} />
 							))}
-						</div>
-					)}
+					</div>
 				</div>
 			</section>
 

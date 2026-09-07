@@ -6,7 +6,7 @@ const QuantityStepper = ({ productId, size = "sm" }) => {
 	
 	return (
 		<div
-			className={`flex items-center rounded-full border border-base-300 bg-base-100 ${
+			className={`flex items-center rounded-md border border-base-300 bg-base-100 ${
 				size === "lg" ? "h-11" : "h-8"
 			}`}
 		>
@@ -15,12 +15,12 @@ const QuantityStepper = ({ productId, size = "sm" }) => {
 				aria-label="Decrease quantity"
 				onClick={() => removeFromCart(productId)}
 				className={`grid place-items-center rounded-full text-base-content/70 transition hover:bg-base-200 ${
-					size === "lg" ? "h-11 w-11" : "h-8 w-8"
+					size === "lg" ? "size-11" : "size-6"
 				}`}
 			>
 				−
 			</button>
-			<span className={`min-w-6 text-center font-semibold ${size === "lg" ? "" : "text-sm"}`}>
+			<span className={`min-w-4 text-center font-semibold ${size === "lg" ? "" : "text-sm"}`}>
 				{qty}
 			</span>
 			<button
@@ -28,7 +28,7 @@ const QuantityStepper = ({ productId, size = "sm" }) => {
 				aria-label="Increase quantity"
 				onClick={() => addToCart(productId)}
 				className={`grid place-items-center rounded-full text-base-content/70 transition hover:bg-base-200 ${
-					size === "lg" ? "h-11 w-11" : "h-8 w-8"
+					size === "lg" ? "size-11" : "size-6"
 				}`}
 			>
 				+

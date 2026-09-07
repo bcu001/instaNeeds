@@ -1,8 +1,5 @@
 import { useNavigate } from "react-router"
-// import { useCart } from "@/context/CartContext"
 import { formatPrice } from "@/data/mockData"
-// import ProductImage from "@/components/product/ProductImage"
-// import QuantityStepper from "@/components/product/QuantityStepper"
 import useCartContext from "@/hooks/useCartContext"
 import CartCard from "./CartCard"
 
@@ -10,7 +7,6 @@ const FREE_DELIVERY_ABOVE = 199
 const DELIVERY_FEE = 39
 
 const CartDrawer = () => {
-	// const { items, isDrawerOpen, closeDrawer, removeItem, subtotal, itemCount } = useCart()
 	const {cartData, isDrawerOpen, closeDrawer, isLoading} = useCartContext();
 	const navigate = useNavigate()
 

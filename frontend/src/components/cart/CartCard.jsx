@@ -5,11 +5,14 @@ import { formatPrice } from '@/data/mockData';
 import QuantityStepper from '../product/QuantityStepper';
 import useProductById from '@/hooks/useProductById';
 import resizeImage from '@/lib/resizeImage';
+import CartCardSkeleton from '../SkeletonLoaders/CartCardSkeleton';
 
 
 const CartCard = ({item}) => {
     const {closeDrawer} = useCartContext();
-    const {data:productData} = useProductById(item.productId);
+    const {data:productData, isPending} = useProductById(item.productId);
+
+    if(isPending) return <CartCardSkeleton/>
   return (
     <li key={productData?.product._id} className="flex items-center gap-3 py-4">
         <Link to={`/products/${productData?.product._id}`} onClick={closeDrawer} className="shrink-0">
@@ -24,7 +27,7 @@ const CartCard = ({item}) => {
                 {productData?.product.title}
             </Link>
             <p className="text-xs text-base-content/55">
-                {formatPrice(productData?.product.price)} · {productData?.product.unit}
+                {formatPrice(productData?.product.price)}
             </p>
         </div>
         <div className="flex flex-col items-end gap-1">

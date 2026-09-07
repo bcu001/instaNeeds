@@ -1,8 +1,6 @@
 import { Link, useParams } from "react-router"
-// import { getProductById, getRelatedProducts } from "@/services/productService"
 import ProductImage from "@/components/product/ProductImage"
 import QuantityStepper from "@/components/product/QuantityStepper"
-import LoadingUI from "@/components/common/LoadingUI"
 import { formatPrice } from "@/data/mockData"
 import ProductNotFoundUI from "@/components/common/ProductNotFoundUI"
 import useCategoryById from "@/hooks/useCategoryById"
@@ -12,21 +10,27 @@ import useCartContext from "@/hooks/useCartContext"
 import resizeImage from "@/lib/resizeImage"
 import ApiErrorUI from "@/components/common/ApiErrorUI"
 import { getApiErrorMessage } from "@/lib/apiError"
+import ProductDetailPageSkeleton from "@/components/SkeletonLoaders/ProductDetailPageSkeleton"
+import { useEffect } from "react"
 
 const ProductDetailPage = () => {
 	useDocumentTitle("Product | InstaNeeds");
 	const { id } = useParams()
 	const {addToCart, getQty, openDrawer} = useCartContext();
 	const qty = getQty(id)
-	// const [related, setRelated] = useState([])
-	// const discount = 20
-
 	const {data:productData, isPending, isError, error, refetch} = useProductById(id);
 	const {data:categoryData} = useCategoryById(productData?.product.category)
 
 	const outOfStock = productData?.product.stock === 0
 
-	if (isPending) return <div className="grid min-h-[50vh] place-items-center"><LoadingUI /></div>
+	useEffect(() => {
+		window.scrollTo({
+			top: 0,
+			behavior: "smooth"
+		});
+	}, []);
+
+	if (isPending) return <ProductDetailPageSkeleton/>
 	if (isError) return <ApiErrorUI message={getApiErrorMessage(error, "Unable to load product")} onRetry={refetch} />
 	if (!productData?.product) return <ProductNotFoundUI/>
 
@@ -73,14 +77,6 @@ const ProductDetailPage = () => {
 
 					<div className="mt-5 flex items-center gap-3">
 						<span className="text-3xl font-extrabold">{formatPrice(productData?.product.price)}</span>
-						{/* {discount ? (
-							<>
-								<span className="text-lg text-base-content/40 line-through">
-									{formatPrice(Math.round(productData?.product.price / (1 - discount / 100)))}
-								</span>
-								<span className="badge badge-error">{discount}% OFF</span>
-							</>
-						) : null} */}
 					</div>
 
 					<p className="mt-5 leading-relaxed text-base-content/75">{productData?.product.description}</p>
@@ -93,7 +89,7 @@ const ProductDetailPage = () => {
 							<button
 								type="button"
 								disabled={outOfStock}
-								className="btn btn-primary h-11 rounded-full px-8"
+								className="btn btn-primary h-11 rounded-md px-8"
 								onClick={() => {
 									addToCart(productData?.product._id)
 									openDrawer()
@@ -104,7 +100,7 @@ const ProductDetailPage = () => {
 						)}
 
 						{qty > 0 && (
-							<button type="button" onClick={openDrawer} className="btn btn-outline h-11 rounded-full px-6">
+							<button type="button" onClick={openDrawer} className="btn btn-outline h-11 rounded-md px-6">
 								Go to cart →
 							</button>
 						)}
