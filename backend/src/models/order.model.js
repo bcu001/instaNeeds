@@ -37,6 +37,11 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         min: 0,
     },
+    deliveryFee: {
+        type: Number,
+        min: 0,
+        default: 0,
+    },
     address: {
         type: String,
         required: [true, "need address!"]
@@ -46,6 +51,21 @@ const orderSchema = new mongoose.Schema({
         enum: ["COD", "online"],
         default: "COD"
     },
+    paymentStatus: {
+        type: String,
+        enum: ["pending", "paid", "failed"],
+        default: "pending"
+    },
+    razorpayOrderId: {
+        type: String,
+        unique: true,
+        sparse: true,
+    },
+    razorpayPaymentId: String,
+    razorpaySignature: String,
+    paidAt: Date,
+    phone: String,
+    deliverySlot: String,
     status: {
         type: String,
         enum: ["placed", "confirmed", "out_for_delivery", "delivered", "cancelled"],
@@ -59,7 +79,7 @@ orderSchema.pre("save", function(next){
         ta += item.price * item.quantity;
     });
 
-    this.totalAmount = ta;
+    this.totalAmount = ta + this.deliveryFee;
     next();
 })
 

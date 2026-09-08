@@ -12,6 +12,7 @@ import morgan from 'morgan'
 import helmet from 'helmet'
 import { errorHandler, notFound } from './middleware/error.middleware.js';
 import rateLimiter from "./middleware/rateLimiter.middleware.js"
+import paymentRouter from "./routes/payment.routes.js";
 
 const app = express();
 app.use(express.json());
@@ -23,7 +24,15 @@ app.use(
     })
 )
 app.use(morgan("dev"))
-app.use(helmet())
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            "script-src": ["'self'", "https://checkout.razorpay.com"],
+            "frame-src": ["'self'", "https://checkout.razorpay.com"],
+            "connect-src": ["'self'", "https://api.razorpay.com"],
+        },
+    },
+}))
 app.use(rateLimiter);
 
 app.get("/", (req, res) => {
@@ -38,6 +47,8 @@ app.use(`/${apiVersion}/products`, productRouter);
 app.use(`/${apiVersion}/orders`, orderRouter);
 app.use(`/${apiVersion}/cart`, cartRouter);
 app.use(`/${apiVersion}/categories`, categoryRouter)
+app.use("/api", paymentRouter);
+app.use(`/${apiVersion}`, paymentRouter);
 
 app.use(notFound);
 app.use(errorHandler);

@@ -15,6 +15,8 @@ const envSchema = z.object({
     REFRESH_TOKEN_EXPIRE_IN:z.string(),
     JWT_REFRESH_SECRET:z.string(),
     JWT_ACCESS_SECRET:z.string(),
+    RAZORPAY_KEY_ID:z.string().min(1),
+    RAZORPAY_KEY_SECRET:z.string().min(1),
 })
 
 const ENV = envSchema.parse(process.env);
