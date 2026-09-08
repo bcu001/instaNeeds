@@ -24,15 +24,15 @@ app.use(
     })
 )
 app.use(morgan("dev"))
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            "script-src": ["'self'", "https://checkout.razorpay.com"],
-            "frame-src": ["'self'", "https://checkout.razorpay.com"],
-            "connect-src": ["'self'", "https://api.razorpay.com"],
-        },
-    },
-}))
+// app.use(helmet({
+//     contentSecurityPolicy: {
+//         directives: {
+//             "script-src": ["'self'", "https://checkout.razorpay.com"],
+//             "frame-src": ["'self'", "https://checkout.razorpay.com"],
+//             "connect-src": ["'self'", "https://api.razorpay.com"],
+//         },
+//     },
+// }))
 app.use(rateLimiter);
 
 app.get("/", (req, res) => {
