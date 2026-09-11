@@ -5,15 +5,14 @@ import { Search } from "lucide-react"
 import { Menu } from "lucide-react"
 import useCartContext from "@/hooks/useCartContext"
 import useAuth from "@/hooks/useAuth"
-import { LogIn } from "lucide-react"
-import { LogOut } from "lucide-react"
+import ProfileDropdown from "./ProfileDropdown"
 
 const Navbar = () => {
 	const {cartData, openDrawer} = useCartContext();
-	const {isAuthenticated,signoutHandler} = useAuth();
+	const {isAuthenticated} = useAuth();
 
 	return (
-		<header className="sticky top-0 z-40 border-b border-base-200 bg-base-100/90 backdrop-blur">
+		<header className="sticky top-0 z-40 border-b border-base-200 bg-base-100/20 backdrop-blur">
 			<div className="mx-auto flex max-w-7xl items-center gap-3 px-4 py-3">
 				
 				<Link to="/" className="flex shrink-0 items-center gap-2">
@@ -41,15 +40,10 @@ const Navbar = () => {
 							</span>
 						) : null}
 					</button>
-
-					{!isAuthenticated && <Link className="btn btn-ghost btn-circle relative text-base-content " to={`/signin`}>
-						<LogIn/>
-					</Link>}
-
-					{isAuthenticated && <button className="btn btn-ghost btn-circle relative text-base-content " onClick={signoutHandler}>
-						<LogOut/>
-						</button>}
-
+					 
+					{/* profile drop down */}
+					<ProfileDropdown/>
+					
 					{/* mobile menu */}
 					<div className="dropdown dropdown-end md:hidden">
 						<button className="btn btn-ghost btn-circle text-base-content" aria-label="Menu"> <Menu/> </button>
