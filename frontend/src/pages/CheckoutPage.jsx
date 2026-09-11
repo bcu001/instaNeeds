@@ -58,6 +58,7 @@ const CheckoutPage = () => {
   const [deliveryDetails, setDeliveryDetails] = useState(null);
   const [isPaying, setIsPaying] = useState(false);
   const [orderId, setOrderId] = useState("");
+  const [totalAmount, setTotalAmount] = useState(0);
   const paymentFailedRef = useRef(false);
 
   const {
@@ -84,10 +85,13 @@ const CheckoutPage = () => {
   };
 
   const placeOrder = async () => {
+    const checkoutTotal = total;
+    setTotalAmount(checkoutTotal);
+
     if (payment === "cod") {
-      clearCart();
       setOrderId(`IN-${Date.now()}`);
       setStep(3);
+      clearCart();
       toast.success("Order placed 🎉");
       return;
     }
@@ -156,7 +160,7 @@ const CheckoutPage = () => {
         orderId={orderId}
         payment={payment}
         slot={slot}
-        total={total}
+        total={totalAmount || total}
       />
     );
   }
@@ -360,7 +364,7 @@ const CheckoutPage = () => {
           <h2 className="text-base font-bold">Order summary</h2>
           <ul className="mt-4 max-h-72 divide-y divide-base-200 overflow-y-auto">
             {cartData?.cart?.items.map((i) => (
-              <CartCard item={i} />
+              <CartCard item={i} key={i?.productId}/>
             ))}
           </ul>
           <dl className="mt-4 space-y-2.5 text-sm">
