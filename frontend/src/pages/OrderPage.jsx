@@ -31,13 +31,13 @@ const OrderPage = () => {
 
   return (
     <section className="min-h-screen bg-base-100">
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <div className="mb-8 flex items-end justify-between gap-4">
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 sm:py-10">
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
               InstaNeeds orders
             </div>
-            <h1 className="mt-3 text-4xl font-black tracking-tight text-base-content">
+            <h1 className="mt-3 text-3xl font-black tracking-tight text-base-content sm:text-4xl">
               My order history
             </h1>
           </div>
@@ -76,7 +76,7 @@ const OrderPage = () => {
         <div className="space-y-4">
           {orders.map((order) => (
             <article key={order._id} className="card border border-base-200 bg-base-100 shadow-lg">
-              <div className="card-body">
+              <div className="card-body p-4 sm:p-6">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <div className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.16em] text-base-content/50">
@@ -99,7 +99,7 @@ const OrderPage = () => {
 
                 <div className="divider my-2" />
 
-                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px]">
+                <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(220px,280px)]">
                   <div className="flex flex-wrap gap-3">
                     {order.items?.slice(0, 3).map((item, index) => (
                       <div key={`${order._id}-${item.productId ?? index}`} className="flex items-center gap-3 rounded-2xl border border-base-200 bg-base-50 p-2">

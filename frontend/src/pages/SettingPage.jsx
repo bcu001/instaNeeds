@@ -15,31 +15,31 @@ const SettingPage = () => {
 
   return (
     <section className="min-h-screen bg-base-100">
-      <div className="mx-auto max-w-5xl px-4 py-10">
-        <div className="mb-8">
+      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
+        <div className="mb-8 sm:mb-10">
           <div className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
             Preferences
           </div>
-          <h1 className="mt-3 text-4xl font-black tracking-tight text-base-content">
+          <h1 className="mt-3 text-3xl font-black tracking-tight text-base-content sm:text-4xl">
             Account settings
           </h1>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           <aside className="card border border-base-200 bg-base-100 shadow-xl">
-            <div className="card-body">
-              <div className="flex items-center gap-4">
+            <div className="card-body p-4 sm:p-6">
+              <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
                 <div className="avatar avatar-placeholder">
                   <Avatar className={"size-16 text-2xl"} />
                 </div>
-                <div>
+                <div className="min-w-0">
                   <div className="text-xs font-black uppercase tracking-[0.2em] text-base-content/50">
                     Signed in as
                   </div>
                   <div className="mt-1 text-xl font-black text-base-content">
                     {user?.name ?? "Guest"}
                   </div>
-                  <div className="text-sm text-base-content/60">
+                  <div className="text-sm break-all text-base-content/60">
                     {user?.email ?? "guest@example.com"}
                   </div>
                 </div>
@@ -67,7 +67,7 @@ const SettingPage = () => {
           </aside>
 
           <main className="card border border-base-200 bg-base-100 shadow-xl">
-            <div className="card-body">
+            <div className="card-body p-4 sm:p-6">
               <div className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.2em] text-primary">
                 <SlidersHorizontal size={16} /> Update preferences
               </div>
