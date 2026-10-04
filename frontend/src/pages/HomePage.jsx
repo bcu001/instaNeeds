@@ -1,183 +1,147 @@
-import { Link } from "react-router"
-import ProductCard from "@/components/product/ProductCard"
-import CategoryCard from "@/components/category/CategoryCard"
-import { formatPrice } from "@/data/mockData"
-import { useState } from "react"
-import useCategory from "@/hooks/useCategory"
-import useFeaturedProduct from "@/hooks/useFeaturedProduct"
-import useDocumentTitle from "@/hooks/useDocumentTitle"
-import ApiErrorUI from "@/components/common/ApiErrorUI"
-import { getApiErrorMessage } from "@/lib/apiError"
-import CategoryCardSkeleton from "@/components/SkeletonLoaders/CategoryCardSkeleton"
-import ProductCardSKeleton from "@/components/SkeletonLoaders/ProductCardSkeleton"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
+import useAuth from "@/hooks/useAuth";
+import HeroSection from "@/components/HeroSection";
+import CategorySection from "@/components/CategorySection";
+import FeaturedProductSection from "./FeaturedProductSection";
 
 const HomePage = () => {
-	useDocumentTitle("Home | InstaNeeds")
-	const [page,setPage] = useState(1)
-	const {data, isError: featuredError, error: featuredErrorDetails, refetch: refetchFeatured, isPending:isFeaturedProductPending, isSuccess:isSuccessFeaturedProduct} = useFeaturedProduct();
-	const {data:categoriesData, isSuccess, isError: categoriesError, error: categoriesErrorDetails, refetch: refetchCategories, isPending} = useCategory(page);
+  useDocumentTitle("InstaNeeds – Essentials, delivered");
+  const { isAuthenticated, user } = useAuth();
+  const [emailInput, setEmailInput] = useState("");
+  const navigate = useNavigate();
 
-	return (
-		<>
-			{/* ── Hero ─────────────────────────────────────────────── */}
-			<section className="relative overflow-hidden bg-linear-to-br from-primary/10 via-base-100 to-accent/10">
-				<div className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full bg-primary/10 blur-3xl" aria-hidden />
-				<div className="pointer-events-none absolute -bottom-24 -left-16 h-72 w-72 rounded-full bg-accent/10 blur-3xl" aria-hidden />
+  const handleGetStarted = (e) => {
+    e.preventDefault();
+    if (emailInput.trim()) {
+      navigate(`/signup?email=${encodeURIComponent(emailInput.trim())}`);
+    } else {
+      navigate("/signup");
+    }
+  };
 
-				<div className="relative mx-auto grid max-w-7xl items-center gap-8 px-4 py-12 md:grid-cols-2 md:py-20">
-					<div>
-						<span className="badge badge-primary badge-outline gap-1 rounded-full px-3">
-							⚡ Delivery in ~30 minutes
-						</span>
-						<h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl lg:text-5xl">
-							Daily needs, <span className="text-primary">delivered</span> before you finish your coffee
-						</h1>
-						<p className="mt-4 max-w-md text-base-content/70">
-							Fresh groceries, chilled drinks and everyday essentials — available at 6 AM or 11 PM,
-							brought to your door in about half an hour.
-						</p>
+  return (
+    <div className="space-y-6 pb-12">
+      {/* Hero Section */}
+      <HeroSection />
 
-						<div className="mt-7 flex flex-wrap gap-3">
-							<Link to="/products" className="btn btn-primary rounded-full px-6">
-								Shop now
-							</Link>
-							<Link to="/products?category=dairy" className="btn btn-ghost rounded-full border border-base-300 px-6">
-								Explore groceries
-							</Link>
-						</div>
+      {/* Category Section */}
+      <CategorySection />
 
-						<dl className="mt-9 grid max-w-md grid-cols-3 gap-4">
-							{[
-								["2k+", "products"],
-								["30 min", "delivery"],
-								["500+", "daily orders"],
-							].map(([value, label]) => (
-								<div key={label} className="rounded-box border border-base-200 bg-base-100/70 px-3 py-2 text-center backdrop-blur">
-									<dt className="text-lg font-bold text-primary">{value}</dt>
-									<dd className="text-[11px] uppercase tracking-wide text-base-content/55">{label}</dd>
-								</div>
-							))}
-						</dl>
-					</div>
+      {/* Featured Products */}
+      <FeaturedProductSection />
 
-					{/* hero artwork: floating product tiles */}
-					<div className="relative mx-auto grid max-w-sm grid-cols-2 gap-4" aria-hidden>
-						<img
-							src="https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&q=60"
-							alt=""
-							loading="lazy"
-							className="aspect-square w-full translate-y-4 rounded-3xl object-cover shadow-xl ring-1 ring-base-300"
-						/>
-						<img
-							src="https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&q=60"
-							alt=""
-							loading="lazy"
-							className="mt-10 aspect-square w-full rounded-3xl object-cover shadow-xl ring-1 ring-base-300"
-						/>
-						<span className="grid aspect-square w-full place-items-center rounded-3xl bg-primary text-6xl text-primary-content shadow-xl">
-							🧃
-						</span>
-						<span className="grid aspect-square w-full translate-y-4 place-items-center rounded-3xl bg-linear-to-br from-primary/20 to-accent/20 text-6xl shadow-xl ring-1 ring-base-300">
-							🥦
-						</span>
-					</div>
-				</div>
-			</section>
+      {/* ── How it works ────────────────────────────────────────── */}
+      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+        <section id="how">
+          <div className="mb-6">
+            <h2 className="text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+              How it works
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+              From shelf to your kitchen counter in 3 simple steps.
+            </p>
+          </div>
 
-			{/* ── Shop by category ─────────────────────────────────── */}
-			<section className="mx-auto max-w-7xl px-4 pt-14">
-				<div className="flex items-end justify-between">
-					<div>
-						<h2 className="text-xl font-bold sm:text-2xl">Shop by category</h2>
-						<p className="mt-1 text-sm text-base-content/55">Freshest picks across the store</p>
-					</div>
-					<Link to="/products" className="btn btn-ghost btn-sm text-primary">View all →</Link>
-				</div>
-				<div >
-					{categoriesError && <ApiErrorUI message={getApiErrorMessage(categoriesErrorDetails, "Unable to load categories")} onRetry={refetchCategories} />}
-					<div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-						{isPending && Array.from({ length: 6 }).map((_, index) => (
-							<CategoryCardSkeleton key={index} />
-						))}
-						{isSuccess && categoriesData?.categories.map((c) => (
-							<CategoryCard key={c.slug} category={c} isPending={isPending}/>
-						))}
-					</div>
-				</div>
-				<div className='mt-10 flex items-center justify-center gap-4'>
-					<button disabled={page===1}  onClick={()=> setPage(prev=> prev-1)} className='btn btn-outline btn-sm rounded-full disabled:opacity-40'>Prev</button>
-					<span className="text-sm text-base-content/55">
-						Page <span className="font-semibold text-base-content">{page}</span> of {categoriesData?.totalPages}
-					</span>
-					<button disabled={page >= categoriesData?.totalPages} onClick={()=> setPage(prev=> prev+1)} className='btn btn-outline btn-sm rounded-full disabled:opacity-40'>Next</button>
-				
-			</div>
-			</section>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-border bg-card p-6 shadow-xs transition-all hover:border-ring">
+              <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-sm font-semibold text-foreground border border-border/50">
+                1
+              </div>
+              <h3 className="text-base font-semibold text-foreground">
+                Choose
+              </h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                Browse categories or search for what you need.
+              </p>
+            </div>
 
-			{/* ── Featured products ─────────────────────────────────── */}
-			<section className="mx-auto max-w-7xl px-4 pb-20 pt-14">
-				<div className="flex items-end justify-between">
-					<div>
-						<h2 className="text-xl font-bold sm:text-2xl">Trending right now</h2>
-						<p className="mt-1 text-sm text-base-content/55">Most-loved items this week</p>
-					</div>
-					<Link to="/products?sort=price-asc" className="btn btn-ghost btn-sm text-primary">View all →</Link>
-				</div>
-				<div className="mt-5">
-					{featuredError && <ApiErrorUI message={getApiErrorMessage(featuredErrorDetails, "Unable to load featured products")} onRetry={refetchFeatured} />}
-					<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-							{isFeaturedProductPending && Array.from({length:8}).map((_,idx)=><ProductCardSKeleton key={idx}/>)}
-							{isSuccessFeaturedProduct && data?.products.map((p) => (
-								<ProductCard key={p._id} product={p} />
-							))}
-					</div>
-				</div>
-			</section>
+            <div className="rounded-xl border border-border bg-card p-6 shadow-xs transition-all hover:border-ring">
+              <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-sm font-semibold text-foreground border border-border/50">
+                2
+              </div>
+              <h3 className="text-base font-semibold text-foreground">
+                We pack
+              </h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                Your nearest store prepares the order in minutes.
+              </p>
+            </div>
 
-			{/* ── Value props ───────────────────────────────────────── */}
-			<section className="border-y border-base-200 bg-base-200/50">
-				<div className="mx-auto grid max-w-7xl gap-6 px-4 py-10 sm:grid-cols-3">
-					{[
-						["⚡", "Superfast delivery", "Doorstep in ~30 minutes, rain or shine"],
-						["🥬", "Freshness promise", "Produce picked and packed the same day"],
-						["💸", "Lowest prices", "Daily offers, no hidden charges"],
-					].map(([emoji, title, sub]) => (
-						<div key={title} className="flex items-center gap-4">
-							<span className="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-primary/10 text-2xl">{emoji}</span>
-							<div>
-								<h3 className="text-sm font-bold">{title}</h3>
-								<p className="text-xs text-base-content/60">{sub}</p>
-							</div>
-						</div>
-					))}
-				</div>
-			</section>
+            <div className="rounded-xl border border-border bg-card p-6 shadow-xs transition-all hover:border-ring">
+              <div className="mb-4 flex h-8 w-8 items-center justify-center rounded-lg bg-muted text-sm font-semibold text-foreground border border-border/50">
+                3
+              </div>
+              <h3 className="text-base font-semibold text-foreground">
+                Delivered
+              </h3>
+              <p className="mt-1.5 text-sm text-muted-foreground">
+                Handed over at your door, fast.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
 
-			{/* ── App CTA ───────────────────────────────────────────── */}
-			<section className="mx-auto max-w-7xl px-4 pt-14 pb-20">
-				<div className="relative overflow-hidden rounded-box bg-linear-to-r from-primary to-primary/70 p-8 text-primary-content sm:p-12">
-					<div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-white/10 blur-2xl" aria-hidden />
-					<h2 className="max-w-lg text-2xl font-extrabold sm:text-3xl">
-						Hungry at 11 PM? Get instaNeeds on your phone
-					</h2>
-					<p className="mt-2 max-w-lg text-primary-content/85">
-						Scan the QR, order in seconds, and get everything delivered while the kettle boils.
-					</p>
-					<div className="mt-6 flex flex-wrap gap-3">
-						<button type="button" className="btn btn-neutral rounded-full bg-base-100 text-base-content hover:bg-base-200">
-							🍎 App Store
-						</button>
-						<button type="button" className="btn rounded-full bg-base-100 text-base-content hover:bg-base-200">
-							▶️ Google Play
-						</button>
-					</div>
-					<p className="mt-4 text-xs text-primary-content/70">
-						Prototype screens shown — {formatPrice(199)} free delivery threshold, {formatPrice(39)} under it.
-					</p>
-				</div>
-			</section>
-		</>
-	)
-}
+      {/* ── Call to action / Join card ─────────────────────────── */}
+      <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+        <div
+          id="join"
+          className="rounded-2xl border border-border bg-muted/60 p-8 sm:p-12 text-center transition-all"
+        >
+          <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            {isAuthenticated
+              ? `Welcome back, ${user?.name || "Friend"}`
+              : "Create your account"}
+          </h2>
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
+            {isAuthenticated
+              ? "Check your past orders, manage your profile and track every delivery in real-time."
+              : "Save addresses, reorder in a tap and track every delivery."}
+          </p>
 
-export default HomePage
+          {!isAuthenticated ? (
+            <form
+              onSubmit={handleGetStarted}
+              className="mx-auto mt-6 flex max-w-sm flex-col gap-2 sm:flex-row"
+            >
+              <input
+                type="email"
+                value={emailInput}
+                onChange={(e) => setEmailInput(e.target.value)}
+                required
+                placeholder="you@example.com"
+                aria-label="Email"
+                className="h-9 flex-1 rounded-lg border border-border bg-background px-3 text-sm text-foreground shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+              <button
+                type="submit"
+                className="btn btn-primary h-9 px-5 rounded-lg text-sm font-medium shadow-xs"
+              >
+                Get started
+              </button>
+            </form>
+          ) : (
+            <div className="mt-6 flex flex-wrap justify-center gap-3">
+              <Link
+                to="/products"
+                className="btn btn-primary h-9 px-5 rounded-lg text-sm font-medium"
+              >
+                Browse products
+              </Link>
+              <Link
+                to="/order"
+                className="btn btn-outline h-9 px-5 rounded-lg text-sm font-medium"
+              >
+                View orders
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default HomePage;

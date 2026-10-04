@@ -1,66 +1,74 @@
-import { Link } from "react-router"
-import ProductImage from "./ProductImage"
-import QuantityStepper from "./QuantityStepper"
-import { formatPrice } from "@/data/mockData"
-import useCategoryById from "@/hooks/useCategoryById"
-import useCartContext from "@/hooks/useCartContext"
-import resizeImage from "@/lib/resizeImage"
-import ProductCardSKeleton from "../SkeletonLoaders/ProductCardSkeleton"
+import { Link } from "react-router";
+import ProductImage from "./ProductImage";
+import QuantityStepper from "./QuantityStepper";
+import { formatPrice } from "@/data/mockData";
+import useCategoryById from "@/hooks/useCategoryById";
+import useCartContext from "@/hooks/useCartContext";
+import resizeImage from "@/lib/resizeImage";
+import ProductCardSKeleton from "../SkeletonLoaders/ProductCardSkeleton";
 
-const ProductCard = ({ product, isPending=false }) => {
-	const {addToCart, isProdcutInCart} = useCartContext();
-	const inCart = isProdcutInCart(product._id)
-	
-	const {data:categoryData, isSuccess} = useCategoryById(product.category);
+const ProductCard = ({ product, isPending = false }) => {
+  const { addToCart, isProdcutInCart } = useCartContext();
+  const inCart = isProdcutInCart(product._id);
+  const { data: categoryData, isSuccess } = useCategoryById(product.category);
 
-	if(isPending) <ProductCardSKeleton/>
+  if (isPending) return <ProductCardSKeleton />;
 
-	return (
-		<div className="group card overflow-hidden rounded-box border border-base-200 bg-base-100 transition duration-200 hover:-translate-y-0.5 hover:border-base-300 hover:shadow-md">
-			<Link to={`/products/${product._id}`} className="relative block">
-				<figure className="aspect-square overflow-hidden">
-					<ProductImage
-						src={resizeImage(product.imageURL, 400,65 )}
-						alt={product.title}
-						emoji={product.emoji}
-						className="h-full w-full transition duration-300 group-hover:scale-105"
-					/>
-				</figure>
-			</Link>
+  return (
+    <article className="group relative flex flex-col rounded-xl border border-border bg-card shadow-xs transition-all duration-300 hover:-translate-y-1 hover:border-ring hover:shadow-md overflow-hidden">
+      <Link
+        to={`/products/${product._id}`}
+        className="relative block overflow-hidden bg-muted aspect-[1/0.9]"
+      >
+        {isSuccess && categoryData?.category && (
+          <span className="absolute top-2.5 left-2.5 z-10 rounded-full border border-border/70 bg-background/90 px-2 py-0.5 text-[11px] font-medium text-foreground backdrop-blur-xs shadow-xs">
+            {categoryData.category.categoryName}
+          </span>
+        )}
+        <ProductImage
+          src={resizeImage(product.imageURL, 400, 65)}
+          alt={product.title}
+          emoji={product.emoji}
+          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      </Link>
 
-			<div className="flex flex-1 flex-col gap-1 p-3 justify-between">
-				{isSuccess && <p className="text-[11px] font-medium uppercase tracking-wider text-base-content/50">
-					{categoryData?.category.categoryName}
-				</p>}
-				<Link to={`/products/${product._id}`}>
-					<h3 className="line-clamp-2 text-sm font-semibold leading-snug hover:text-primary">
-						{product.title}
-					</h3>
-				</Link>
-				{/* <p className="text-xs text-base-content/60">{product.unit}</p> */}
+      <div className="flex flex-1 flex-col justify-between gap-3 p-3.5 sm:p-4">
+        <div className="space-y-1">
+          <div className="flex items-start justify-between gap-2">
+            <Link to={`/products/${product._id}`} className="block">
+              <h3
+                className="line-clamp-2 text-sm font-semibold text-foreground transition-colors hover:text-muted-fg"
+                title={product.title}
+              >
+                {product.title}
+              </h3>
+            </Link>
+            <span className="shrink-0 text-sm font-semibold text-foreground whitespace-nowrap">
+              {formatPrice(product.price)}
+            </span>
+          </div>
+          {product.unit && (
+            <p className="text-xs text-muted-foreground">{product.unit}</p>
+          )}
+        </div>
 
-				<div className="mt-2 flex items-center justify-between gap-2">
-					<div className="flex items-baseline gap-1.5">
-						<span className="text-xs md:text-base font-bold">{formatPrice(product.price)}</span>
-					</div>
+        <div className="pt-1">
+          {inCart ? (
+            <QuantityStepper productId={product._id} />
+          ) : (
+            <button
+              type="button"
+              onClick={() => addToCart(product._id)}
+              className="btn btn-outline w-full h-9 rounded-lg text-xs sm:text-sm font-medium border-border hover:bg-muted text-foreground transition-all shadow-xs"
+            >
+              Add to cart
+            </button>
+          )}
+        </div>
+      </div>
+    </article>
+  );
+};
 
-					<div>
-						{inCart ? (
-						<QuantityStepper productId={product._id} />
-					) : (
-						<button
-							type="button"
-							onClick={() => addToCart(product._id)}
-							className="btn btn-primary btn-sm h-8 min-h-8 rounded-md px-4"
-						>
-							Add
-						</button>
-					)}
-					</div>
-				</div>
-			</div>
-		</div>
-	)
-}
-
-export default ProductCard
+export default ProductCard;

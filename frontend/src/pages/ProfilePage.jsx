@@ -1,16 +1,12 @@
-import { Calendar, CheckCircle2, Mail, Shield, UserRound } from "lucide-react";
-
-import { Navigate } from "react-router";
-
+import { Calendar, CheckCircle2, Mail, Shield, UserRound, Package, Settings } from "lucide-react";
+import { Link, Navigate } from "react-router";
 import useAuth from "@/hooks/useAuth";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
-
 import LoadingUI from "@/components/common/LoadingUI";
 import Avatar from "@/components/common/Avatar";
 
 const ProfilePage = () => {
-  useDocumentTitle("My profile | InstaNeeds");
-
+  useDocumentTitle("Profile | InstaNeeds");
   const { user, isLoading, isAuthenticated } = useAuth();
 
   if (!isAuthenticated) {
@@ -32,99 +28,81 @@ const ProfilePage = () => {
   });
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 lg:px-8">
+    <section className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
       <div className="space-y-6">
         {/* Header */}
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-base-content/60">
-            InstaNeeds account
-          </p>
-
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-3xl font-black capitalize sm:text-4xl">
-              My profile
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Account
+            </span>
+            <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              Profile
             </h1>
+            <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+              Manage your personal information and account security.
+            </p>
+          </div>
 
-            <div className="aura aura-dual self-start sm:self-auto">
-              <div className="card bg-base-100">
-                <div className="badge badge-success badge-outline gap-1.5 px-3 py-3">
-                  <CheckCircle2 size={16} />
-                  Active member
-                </div>
-              </div>
-            </div>
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-500 w-fit">
+            <CheckCircle2 size={14} />
+            <span>Active member</span>
           </div>
         </div>
 
-        {/* Main content */}
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+        {/* Main content grid */}
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
           {/* Profile card */}
-          <section className="card border border-base-300 bg-base-100 shadow-sm">
-            <div className="card-body p-5 sm:p-6 md:p-8">
-              {/* Profile information */}
-              <div className="flex flex-col items-center text-center sm:flex-row sm:items-start sm:text-left">
-                <div className="shrink-0">
-                  <Avatar className="size-20 text-4xl sm:size-24" />
-                </div>
-
-                <div className="mt-4 min-w-0 sm:ml-5 sm:mt-0 ">
-                  <span className="badge badge-primary badge-soft">
-                    {user.role?.toUpperCase() ?? "CUSTOMER"}
-                  </span>
-
-                  <h2 className="mt-2 truncate text-2xl font-black sm:text-3xl">
-                    {user.name}
-                  </h2>
-
-                  <div className="mt-3 space-y-2 text-sm text-base-content/70 ">
-                    <div className="flex min-w-0 max-w-full items-center justify-center gap-2 sm:justify-start">
-                      <Mail size={15} className="shrink-0" />
-                      <span className="min-w-0 max-w-full break-all">
-                        {user.email}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-center gap-2 sm:justify-start">
-                      <Calendar size={15} className="shrink-0" />
-                      <span>Joined {joinedDate}</span>
-                    </div>
+          <section className="rounded-xl border border-border bg-card p-6 shadow-xs space-y-6">
+            <div className="flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
+              <Avatar className="size-20 text-3xl shrink-0" />
+              <div className="min-w-0">
+                <span className="inline-flex items-center rounded-full border border-border bg-muted px-2.5 py-0.5 text-xs font-semibold text-foreground uppercase tracking-wider">
+                  {user.role ?? "CUSTOMER"}
+                </span>
+                <h2 className="mt-2 text-xl font-bold text-foreground sm:text-2xl truncate">
+                  {user.name}
+                </h2>
+                <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <Mail size={13} className="shrink-0" />
+                    <span className="break-all">{user.email}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Calendar size={13} className="shrink-0" />
+                    <span>Member since {joinedDate}</span>
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="divider" />
-
-              {/* Account details */}
+            <div className="border-t border-border pt-4">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
+                Account Details
+              </h3>
               <div className="space-y-1">
-                <div className="flex flex-col gap-1 rounded-lg p-3 hover:bg-base-200 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-2 text-sm font-medium text-base-content/60">
-                    <UserRound size={16} />
+                <div className="flex flex-col gap-1 rounded-lg p-2.5 hover:bg-muted/40 transition-colors sm:flex-row sm:items-center sm:justify-between text-sm">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <UserRound size={15} />
                     <span>Name</span>
                   </div>
-
-                  <span className="wrap-break-word font-medium sm:text-right">
-                    {user.name}
-                  </span>
+                  <span className="font-medium text-foreground">{user.name}</span>
                 </div>
 
-                <div className="flex flex-col gap-1 rounded-lg p-3 hover:bg-base-200 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-2 text-sm font-medium text-base-content/60">
-                    <Mail size={16} />
-                    <span>Email</span>
+                <div className="flex flex-col gap-1 rounded-lg p-2.5 hover:bg-muted/40 transition-colors sm:flex-row sm:items-center sm:justify-between text-sm">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Mail size={15} />
+                    <span>Email address</span>
                   </div>
-
-                  <span className="break-all font-medium sm:text-right">
-                    {user.email}
-                  </span>
+                  <span className="font-medium text-foreground break-all">{user.email}</span>
                 </div>
 
-                <div className="flex flex-col gap-1 rounded-lg p-3 hover:bg-base-200 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-2 text-sm font-medium text-base-content/60">
-                    <Shield size={16} />
-                    <span>Access</span>
+                <div className="flex flex-col gap-1 rounded-lg p-2.5 hover:bg-muted/40 transition-colors sm:flex-row sm:items-center sm:justify-between text-sm">
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Shield size={15} />
+                    <span>Role</span>
                   </div>
-
-                  <span className="badge badge-ghost">
+                  <span className="inline-flex items-center rounded-full border border-border bg-muted/60 px-2.5 py-0.5 text-xs font-medium text-foreground capitalize">
                     {user.role ?? "customer"}
                   </span>
                 </div>
@@ -132,51 +110,41 @@ const ProfilePage = () => {
             </div>
           </section>
 
-          {/* Account summary */}
-          <aside className="card border border-base-300 bg-base-100 shadow-sm">
-            <div className="card-body p-5 sm:p-6">
-              <h3 className="text-lg font-bold">Account summary</h3>
-
-              <div className="mt-3 divide-y divide-base-300">
-                {/* Delivery */}
-                <div className="flex items-center justify-between gap-4 py-4">
-                  <div className="min-w-0">
-                    <p className="font-medium">Delivery address</p>
-                    <p className="text-sm text-base-content/60">
-                      Home delivery enabled
-                    </p>
-                  </div>
-
-                  <span className="badge badge-success badge-soft shrink-0">
-                    Active
-                  </span>
+          {/* Quick links & summary */}
+          <aside className="rounded-xl border border-border bg-card p-6 shadow-xs space-y-5 h-fit">
+            <h3 className="text-base font-semibold text-foreground">Quick actions</h3>
+            <div className="space-y-2">
+              <Link
+                to="/order"
+                className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted transition-all"
+              >
+                <div className="flex items-center gap-2.5 text-sm font-medium text-foreground">
+                  <Package size={16} className="text-muted-foreground" />
+                  <span>My orders</span>
                 </div>
+                <span className="text-xs text-muted-foreground">→</span>
+              </Link>
 
-                {/* Orders */}
-                <div className="flex items-center justify-between gap-4 py-4">
-                  <div>
-                    <p className="font-medium">Order history</p>
-                    <p className="text-sm text-base-content/60">
-                      View your previous orders
-                    </p>
-                  </div>
-
-                  <span className="badge badge-info badge-soft shrink-0">
-                    Live
-                  </span>
+              <Link
+                to="/settings"
+                className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted transition-all"
+              >
+                <div className="flex items-center gap-2.5 text-sm font-medium text-foreground">
+                  <Settings size={16} className="text-muted-foreground" />
+                  <span>Preferences</span>
                 </div>
+                <span className="text-xs text-muted-foreground">→</span>
+              </Link>
+            </div>
 
-                {/* Security */}
-                <div className="flex items-center justify-between gap-4 py-4">
-                  <div>
-                    <p className="font-medium">Security</p>
-                    <p className="text-sm text-base-content/60">
-                      Your session is protected
-                    </p>
-                  </div>
-
-                  <CheckCircle2 size={18} className="shrink-0 text-success" />
-                </div>
+            <div className="border-t border-border pt-4 text-xs text-muted-foreground space-y-2">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 size={14} className="text-emerald-500 shrink-0" />
+                <span>Encrypted checkout enabled</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 size={14} className="text-emerald-500 shrink-0" />
+                <span>Fast 10-minute neighbourhood hub routing</span>
               </div>
             </div>
           </aside>

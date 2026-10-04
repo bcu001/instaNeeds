@@ -1,40 +1,46 @@
-import useCartContext from "@/hooks/useCartContext"
+import useCartContext from "@/hooks/useCartContext";
 
 const QuantityStepper = ({ productId, size = "sm" }) => {
-	const {getQty, addToCart, removeFromCart} = useCartContext()
-	const qty = getQty(productId)
-	
-	return (
-		<div
-			className={`flex items-center rounded-md border border-base-300 bg-base-100 ${
-				size === "lg" ? "h-11" : "h-8"
-			}`}
-		>
-			<button
-				type="button"
-				aria-label="Decrease quantity"
-				onClick={() => removeFromCart(productId)}
-				className={`grid place-items-center rounded-full text-base-content/70 transition hover:bg-base-200 ${
-					size === "lg" ? "size-11" : "size-6"
-				}`}
-			>
-				−
-			</button>
-			<span className={`min-w-4 text-center font-semibold ${size === "lg" ? "" : "text-sm"}`}>
-				{qty}
-			</span>
-			<button
-				type="button"
-				aria-label="Increase quantity"
-				onClick={() => addToCart(productId)}
-				className={`grid place-items-center rounded-full text-base-content/70 transition hover:bg-base-200 ${
-					size === "lg" ? "size-11" : "size-6"
-				}`}
-			>
-				+
-			</button>
-		</div>
-	)
-}
+  const { getQty, addToCart, removeFromCart } = useCartContext();
+  const qty = getQty(productId);
 
-export default QuantityStepper
+  const isLg = size === "lg";
+
+  return (
+    <div
+      className={`inline-flex items-center justify-between rounded-lg border border-border bg-background shadow-xs transition-colors ${
+        isLg ? "h-10 px-1 min-w-30" : "h-9 px-0.5 w-full min-w-24"
+      }`}
+    >
+      <button
+        type="button"
+        aria-label="Decrease quantity"
+        onClick={() => removeFromCart(productId)}
+        className={`flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors ${
+          isLg ? "w-8 h-8 text-base" : "w-7 h-7 text-sm"
+        }`}
+      >
+        −
+      </button>
+      <span
+        className={`font-semibold text-center select-none text-foreground ${
+          isLg ? "text-sm min-w-6" : "text-xs min-w-5"
+        }`}
+      >
+        {qty}
+      </span>
+      <button
+        type="button"
+        aria-label="Increase quantity"
+        onClick={() => addToCart(productId)}
+        className={`flex items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors ${
+          isLg ? "w-8 h-8 text-base" : "w-7 h-7 text-sm"
+        }`}
+      >
+        +
+      </button>
+    </div>
+  );
+};
+
+export default QuantityStepper;

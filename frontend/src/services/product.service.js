@@ -17,7 +17,7 @@ export async function getProductById({queryKey}){
     return res.data?.data;
 }
 
-export async function getFeaturedProducts({queryKey}) {
+export async function getFeaturedProducts() {
     // const [,limit] = queryKey;
     const limit = 8;
     const res = await api.get(`/products/featured?limit=${limit}`);

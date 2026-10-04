@@ -1,146 +1,213 @@
-import { Bell, MapPin, ShieldCheck, SlidersHorizontal } from "lucide-react";
+import {
+  Bell,
+  MapPin,
+  ShieldCheck,
+  SlidersHorizontal,
+  Moon,
+  Sun,
+  Truck,
+} from "lucide-react";
 import { useState } from "react";
 import useAuth from "@/hooks/useAuth";
+import useTheme from "@/hooks/useTheme";
 import useDocumentTitle from "@/hooks/useDocumentTitle";
 import Avatar from "@/components/common/Avatar";
+import toast from "react-hot-toast";
 
 const SettingPage = () => {
   useDocumentTitle("Settings | InstaNeeds");
   const { user } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const [notifications, setNotifications] = useState({
     orderUpdates: true,
     deliveryReminders: true,
     promos: false,
   });
 
+  const handleSave = () => {
+    toast.success("Preferences saved");
+  };
+
+  const handleReset = () => {
+    setNotifications({
+      orderUpdates: true,
+      deliveryReminders: true,
+      promos: false,
+    });
+    toast("Preferences reset to defaults");
+  };
+
   return (
-    <section className="min-h-screen bg-base-100">
+    <section className="min-h-[70vh] bg-background">
       <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-10">
-        <div className="mb-8 sm:mb-10">
-          <div className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
+        <div className="mb-8">
+          <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Preferences
-          </div>
-          <h1 className="mt-3 text-3xl font-black tracking-tight text-base-content sm:text-4xl">
+          </span>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
             Account settings
           </h1>
+          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+            Customize your notifications, appearance, and delivery defaults.
+          </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-          <aside className="card border border-base-200 bg-base-100 shadow-xl">
-            <div className="card-body p-4 sm:p-6">
-              <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-center">
-                <div className="avatar avatar-placeholder">
-                  <Avatar className={"size-16 text-2xl"} />
+        <div className="grid gap-6 lg:grid-cols-[300px_1fr]">
+          {/* User overview sidebar */}
+          <aside className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs space-y-5 h-fit">
+            <div className="flex items-center gap-3.5">
+              <Avatar className="size-12 text-xl" />
+              <div className="min-w-0">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
+                  Signed in as
+                </span>
+                <div className="truncate text-base font-bold text-foreground">
+                  {user?.name ?? "Guest User"}
                 </div>
-                <div className="min-w-0">
-                  <div className="text-xs font-black uppercase tracking-[0.2em] text-base-content/50">
-                    Signed in as
-                  </div>
-                  <div className="mt-1 text-xl font-black text-base-content">
-                    {user?.name ?? "Guest"}
-                  </div>
-                  <div className="text-sm break-all text-base-content/60">
-                    {user?.email ?? "guest@example.com"}
-                  </div>
+                <div className="truncate text-xs text-muted-foreground">
+                  {user?.email ?? "guest@example.com"}
                 </div>
               </div>
-              <div className="divider" />
-              <div className="space-y-4">
-                <div className="rounded-2xl bg-base-50 p-4">
-                  <div className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-base-content/60">
-                    <ShieldCheck size={15} /> Security
-                  </div>
-                  <div className="mt-2 text-sm text-base-content/70">
-                    Protected session is active.
-                  </div>
+            </div>
+
+            <div className="border-t border-border pt-4 space-y-3">
+              <div className="rounded-lg border border-border bg-muted/40 p-3">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground">
+                  <ShieldCheck size={14} className="text-emerald-500" />
+                  <span>Security</span>
                 </div>
-                <div className="rounded-2xl bg-base-50 p-4">
-                  <div className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.16em] text-base-content/60">
-                    <MapPin size={15} /> Delivery
-                  </div>
-                  <div className="mt-2 text-sm text-base-content/70">
-                    Default addresses are managed through checkout.
-                  </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Protected session is active.
+                </p>
+              </div>
+
+              <div className="rounded-lg border border-border bg-muted/40 p-3">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-foreground">
+                  <MapPin size={14} className="text-muted-foreground" />
+                  <span>Delivery</span>
                 </div>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Default address configured via checkout.
+                </p>
               </div>
             </div>
           </aside>
 
-          <main className="card border border-base-200 bg-base-100 shadow-xl">
-            <div className="card-body p-4 sm:p-6">
-              <div className="flex items-center gap-2 text-sm font-black uppercase tracking-[0.2em] text-primary">
-                <SlidersHorizontal size={16} /> Update preferences
-              </div>
+          {/* Preferences main form */}
+          <main className="rounded-xl border border-border bg-card p-5 sm:p-6 shadow-xs space-y-6">
+            <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+              <SlidersHorizontal size={16} className="text-muted-foreground" />
+              <span>Notification & Display Preferences</span>
+            </div>
 
-              <div className="mt-6 space-y-4">
-                <div className="form-control">
-                  <label className="label cursor-pointer justify-between gap-4">
-                    <span className="label-text flex items-center gap-2 font-bold">
-                      <Bell size={16} /> Order updates
-                    </span>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-primary"
-                      checked={notifications.orderUpdates}
-                      onChange={(e) =>
-                        setNotifications((current) => ({
-                          ...current,
-                          orderUpdates: e.target.checked,
-                        }))
-                      }
-                    />
-                  </label>
+            <div className="space-y-4 divide-y divide-border">
+              {/* Appearance / Theme */}
+              <div className="flex items-center justify-between gap-4 pt-4 first:pt-0">
+                <div>
+                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    {theme === "dark" ? <Moon size={16} /> : <Sun size={16} />}
+                    <span>Theme appearance</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Currently set to {theme === "dark" ? "Dark" : "Light"} mode.
+                  </p>
                 </div>
-
-                <div className="form-control">
-                  <label className="label cursor-pointer justify-between gap-4">
-                    <span className="label-text flex items-center gap-2 font-bold">
-                      <TruckIcon /> Delivery reminders
-                    </span>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-primary"
-                      checked={notifications.deliveryReminders}
-                      onChange={(e) =>
-                        setNotifications((current) => ({
-                          ...current,
-                          deliveryReminders: e.target.checked,
-                        }))
-                      }
-                    />
-                  </label>
-                </div>
-
-                <div className="form-control">
-                  <label className="label cursor-pointer justify-between gap-4">
-                    <span className="label-text font-bold">
-                      Promotions and offers
-                    </span>
-                    <input
-                      type="checkbox"
-                      className="toggle toggle-primary"
-                      checked={notifications.promos}
-                      onChange={(e) =>
-                        setNotifications((current) => ({
-                          ...current,
-                          promos: e.target.checked,
-                        }))
-                      }
-                    />
-                  </label>
-                </div>
-              </div>
-
-              <div className="divider" />
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <button className="btn btn-primary btn-block">
-                  Save settings
-                </button>
-                <button className="btn btn-outline btn-block">
-                  Reset defaults
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  className="btn btn-outline h-9 px-4 rounded-lg text-xs font-medium border-border hover:bg-muted text-foreground"
+                >
+                  Switch to {theme === "dark" ? "Light" : "Dark"}
                 </button>
               </div>
+
+              {/* Order updates */}
+              <div className="flex items-center justify-between gap-4 pt-4">
+                <div>
+                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <Bell size={16} />
+                    <span>Order updates</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Receive live notifications when your order status changes.
+                  </p>
+                </div>
+                <input
+                  type="checkbox"
+                  className="toggle border-border bg-muted checked:bg-primary"
+                  checked={notifications.orderUpdates}
+                  onChange={(e) =>
+                    setNotifications((c) => ({
+                      ...c,
+                      orderUpdates: e.target.checked,
+                    }))
+                  }
+                />
+              </div>
+
+              {/* Delivery reminders */}
+              <div className="flex items-center justify-between gap-4 pt-4">
+                <div>
+                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <Truck size={16} />
+                    <span>Delivery reminders</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Get an alert when your rider is arriving at your door.
+                  </p>
+                </div>
+                <input
+                  type="checkbox"
+                  className="toggle border-border bg-muted checked:bg-primary"
+                  checked={notifications.deliveryReminders}
+                  onChange={(e) =>
+                    setNotifications((c) => ({
+                      ...c,
+                      deliveryReminders: e.target.checked,
+                    }))
+                  }
+                />
+              </div>
+
+              {/* Promotions */}
+              <div className="flex items-center justify-between gap-4 pt-4">
+                <div>
+                  <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                    <span>Promotions and discounts</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Occasional deals and coupon alerts for seasonal specials.
+                  </p>
+                </div>
+                <input
+                  type="checkbox"
+                  className="toggle border-border bg-muted checked:bg-primary"
+                  checked={notifications.promos}
+                  onChange={(e) =>
+                    setNotifications((c) => ({
+                      ...c,
+                      promos: e.target.checked,
+                    }))
+                  }
+                />
+              </div>
+            </div>
+
+            <div className="border-t border-border pt-4 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={handleSave}
+                className="btn btn-primary h-10 px-6 rounded-lg text-sm font-medium shadow-xs"
+              >
+                Save preferences
+              </button>
+              <button
+                type="button"
+                onClick={handleReset}
+                className="btn btn-outline h-10 px-5 rounded-lg text-sm font-medium border-border hover:bg-muted text-foreground"
+              >
+                Reset defaults
+              </button>
             </div>
           </main>
         </div>
@@ -148,7 +215,5 @@ const SettingPage = () => {
     </section>
   );
 };
-
-const TruckIcon = () => <span className="text-base">📦</span>;
 
 export default SettingPage;

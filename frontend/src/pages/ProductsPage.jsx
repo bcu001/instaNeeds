@@ -1,84 +1,145 @@
-import { useEffect, useState } from "react"
-import ProductCard from "@/components/product/ProductCard"
-import {useForm, useWatch} from 'react-hook-form'
-import NoSearchResultUI from "@/components/common/NoSearchResultUI"
-import useProducts from "@/hooks/useProducts"
-import useDocumentTitle from "@/hooks/useDocumentTitle"
-import ApiErrorUI from "@/components/common/ApiErrorUI"
-import { getApiErrorMessage } from "@/lib/apiError"
-import ProductCardSKeleton from "@/components/SkeletonLoaders/ProductCardSkeleton"
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router";
+import { Search } from "lucide-react";
+import ProductCard from "@/components/product/ProductCard";
+import { useForm, useWatch } from "react-hook-form";
+import NoSearchResultUI from "@/components/common/NoSearchResultUI";
+import useProducts from "@/hooks/useProducts";
+import useDocumentTitle from "@/hooks/useDocumentTitle";
+import ApiErrorUI from "@/components/common/ApiErrorUI";
+import { getApiErrorMessage } from "@/lib/apiError";
+import ProductCardSKeleton from "@/components/SkeletonLoaders/ProductCardSkeleton";
 
-const ProductsPage = () => {	
-	useDocumentTitle("Search Product | InstaNeeds");
-	const {register, control, reset} = useForm({
-		defaultValues: {
-			q: "",
-		},
-	});
-	const [page, setPage] = useState(1)
-	const [searchQuery, setSearchQuery] = useState('')
-	
-	const search = useWatch({
-		control,
-		name:"q"
-	})
-	
-	useEffect(()=>{
-		const timer = setTimeout(()=>{
-			setSearchQuery(search);
-			setPage(1);
-		},500)
-		return ()=> clearTimeout(timer);
-	},[search])
-	
-	useEffect(() => {
-		window.scrollTo({
-			top: 0,
-			behavior: "smooth"
-		});
-	}, [page]);
+const ProductsPage = () => {
+  useDocumentTitle("All Products | InstaNeeds");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialQ = searchParams.get("q") || "";
 
-	const {isPending, data, isError, error, refetch, isSuccess} = useProducts(page,searchQuery);
-		
-		return (
-			<div className="mx-auto max-w-7xl p-4">
+  const { register, control, reset, setValue } = useForm({
+    defaultValues: {
+      q: initialQ,
+    },
+  });
 
-			{/* search + sort bar */}
-			<div className="flex flex-col gap-3 sm:flex-row sm:items-center justify-center">
-				<form className="join w-full sm:max-w-md" role="search">
-					<input
-						id="q"
-						placeholder="Search in products…"
-						className="input join-item w-full bg-base-200 placeholder:text-base-content/40"
-						{...register("q",{ required: true })}
-					/>
-					<button disabled={true} type="submit" className="btn btn-primary join-item hidden">Search</button>
-				</form>
-			</div>
+  const [page, setPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState(initialQ);
 
-			{/* grid */}
-			<div className="mt-6">
-				{isError && <ApiErrorUI message={getApiErrorMessage(error, "Unable to load products")} onRetry={refetch} />}
-				{data?.products.length === 0 && <NoSearchResultUI reset={reset}/>}
-				<div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-					{isPending && Array.from({length:20}).map((_,idx)=><ProductCardSKeleton key={idx}/>)}
-					{data?.products.length > 0 && data?.products.map((p) => (
-						<ProductCard key={p._id} product={p} />
-					))}
-				</div>
-			</div>
+  const urlQ = searchParams.get("q") || "";
 
-			{/* pagination */}
-			{isSuccess && <div className='mt-10 flex items-center justify-center gap-4'>
-					<button disabled={page===1}  onClick={()=> setPage(prev=> prev-1)} className='btn btn-outline btn-sm rounded-full disabled:opacity-40'>Prev</button>
-					<span className="text-sm text-base-content/55">
-						Page <span className="font-semibold text-base-content">{page}</span> of {data?.totalPages}
-					</span>
-					<button disabled={page >= data?.totalPages} onClick={()=> setPage(prev=> prev+1)} className='btn btn-outline btn-sm rounded-full disabled:opacity-40'>Next</button>
-				
-			</div>}
-		</div>
-	)
-}
+  const search = useWatch({
+    control,
+    name: "q",
+  });
 
-export default ProductsPage
+  useEffect(() => {
+    setValue("q", urlQ);
+  }, [urlQ, setValue]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchQuery(search || "");
+      setPage(1);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }, [page]);
+
+  const { isPending, data, isError, error, refetch, isSuccess } = useProducts(
+    page,
+    searchQuery,
+  );
+
+  const handleReset = () => {
+    reset({ q: "" });
+    setSearchQuery("");
+    setSearchParams({});
+  };
+
+  return (
+    <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+      {/* Page heading */}
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+            All products
+          </h1>
+          <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
+            Browse fresh groceries, snacks, and daily household essentials.
+          </p>
+        </div>
+
+        {/* Search bar */}
+        <div className="w-full sm:max-w-xs">
+          <div className="relative">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
+            />
+            <input
+              id="q"
+              placeholder="Filter products…"
+              className="h-9 w-full rounded-lg border border-border bg-card pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground shadow-xs focus:outline-none focus:ring-1 focus:ring-ring"
+              {...register("q")}
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Products Grid */}
+      <div className="mt-6">
+        {isError && (
+          <ApiErrorUI
+            message={getApiErrorMessage(error, "Unable to load products")}
+            onRetry={refetch}
+          />
+        )}
+
+        {!isPending && data?.products?.length === 0 && (
+          <NoSearchResultUI reset={handleReset} />
+        )}
+
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">
+          {isPending &&
+            Array.from({ length: 12 }).map((_, idx) => (
+              <ProductCardSKeleton key={idx} />
+            ))}
+
+          {data?.products?.length > 0 &&
+            data.products.map((p) => <ProductCard key={p._id} product={p} />)}
+        </div>
+      </div>
+
+      {/* Pagination */}
+      {isSuccess && data?.totalPages > 1 && (
+        <div className="mt-10 flex items-center justify-center gap-3">
+          <button
+            disabled={page === 1}
+            onClick={() => setPage((prev) => prev - 1)}
+            className="btn btn-outline btn-sm rounded-lg h-8 px-3 text-xs disabled:opacity-40"
+          >
+            Prev
+          </button>
+          <span className="text-xs text-muted-foreground">
+            Page <span className="font-semibold text-foreground">{page}</span>{" "}
+            of {data?.totalPages}
+          </span>
+          <button
+            disabled={page >= data?.totalPages}
+            onClick={() => setPage((prev) => prev + 1)}
+            className="btn btn-outline btn-sm rounded-lg h-8 px-3 text-xs disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ProductsPage;

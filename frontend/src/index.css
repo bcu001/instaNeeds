@@ -1,58 +1,275 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 @plugin "daisyui" {
-	themes: false;
+	themes: light, dark --default;
 }
 
-@plugin "daisyui/theme" {
-	name: "insta";
-	default: true;
-	prefersdark: false;
-	color-scheme: light;
+:root {
+	--background: #ffffff;
+	--foreground: #09090b;
+	--card: #ffffff;
+	--card-foreground: #09090b;
+	--muted: #f4f4f5;
+	--muted-fg: #71717a;
+	--border: #e4e4e7;
+	--primary: #18181b;
+	--primary-fg: #fafafa;
+	--secondary: #f4f4f5;
+	--secondary-fg: #18181b;
+	--ring: #a1a1aa;
+	--radius: 10px;
+	--shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
+	--ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 
-	--color-base-100: oklch(99% 0.004 110);
-	--color-base-200: oklch(97% 0.006 110);
-	--color-base-300: oklch(92% 0.01 110);
-	--color-base-content: oklch(33% 0.025 130);
+	/* DaisyUI theme overrides for light */
+	--color-base-100: #ffffff;
+	--color-base-200: #f4f4f5;
+	--color-base-300: #e4e4e7;
+	--color-base-content: #09090b;
+	--color-primary: #18181b;
+	--color-primary-content: #fafafa;
+	--color-secondary: #f4f4f5;
+	--color-secondary-content: #18181b;
+	--color-neutral: #18181b;
+	--color-neutral-content: #fafafa;
+}
 
-	--color-primary: oklch(63% 0.14 160);
-	--color-primary-content: oklch(99% 0 0);
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme="light"]) {
+		--background: #09090b;
+		--foreground: #fafafa;
+		--card: #09090b;
+		--card-foreground: #fafafa;
+		--muted: #27272a;
+		--muted-fg: #a1a1aa;
+		--border: #27272a;
+		--primary: #fafafa;
+		--primary-fg: #18181b;
+		--secondary: #27272a;
+		--secondary-fg: #fafafa;
+		--ring: #52525b;
+		--shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+		--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
 
-	--color-secondary: oklch(75% 0.1 155);
-	--color-secondary-content: oklch(26% 0.06 160);
+		/* DaisyUI theme overrides for dark */
+		--color-base-100: #09090b;
+		--color-base-200: #18181b;
+		--color-base-300: #27272a;
+		--color-base-content: #fafafa;
+		--color-primary: #fafafa;
+		--color-primary-content: #18181b;
+		--color-secondary: #27272a;
+		--color-secondary-content: #fafafa;
+		--color-neutral: #fafafa;
+		--color-neutral-content: #18181b;
+	}
+}
 
-	--color-accent: oklch(82% 0.1 85);
-	--color-accent-content: oklch(30% 0.08 90);
+:root[data-theme="dark"] {
+	--background: #09090b;
+	--foreground: #fafafa;
+	--card: #09090b;
+	--card-foreground: #fafafa;
+	--muted: #27272a;
+	--muted-fg: #a1a1aa;
+	--border: #27272a;
+	--primary: #fafafa;
+	--primary-fg: #18181b;
+	--secondary: #27272a;
+	--secondary-fg: #fafafa;
+	--ring: #52525b;
+	--shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.35);
 
-	--color-neutral: oklch(42% 0.02 150);
-	--color-neutral-content: oklch(97% 0 0);
+	/* DaisyUI theme overrides for dark */
+	--color-base-100: #09090b;
+	--color-base-200: #18181b;
+	--color-base-300: #27272a;
+	--color-base-content: #fafafa;
+	--color-primary: #fafafa;
+	--color-primary-content: #18181b;
+	--color-secondary: #27272a;
+	--color-secondary-content: #fafafa;
+	--color-neutral: #fafafa;
+	--color-neutral-content: #18181b;
+}
 
-	--color-info: oklch(72% 0.12 230);
-	--color-info-content: oklch(20% 0.08 230);
-	--color-success: oklch(70% 0.13 150);
-	--color-success-content: oklch(24% 0.08 150);
-	--color-warning: oklch(80% 0.14 75);
-	--color-warning-content: oklch(30% 0.09 75);
-	--color-error: oklch(64% 0.15 24);
-	--color-error-content: oklch(97% 0 0);
+:root[data-theme="light"] {
+	--background: #ffffff;
+	--foreground: #09090b;
+	--card: #ffffff;
+	--card-foreground: #09090b;
+	--muted: #f4f4f5;
+	--muted-fg: #71717a;
+	--border: #e4e4e7;
+	--primary: #18181b;
+	--primary-fg: #fafafa;
+	--secondary: #f4f4f5;
+	--secondary-fg: #18181b;
+	--ring: #a1a1aa;
+	--shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
 
-	--radius-selector: 0.75rem;
-	--radius-field: 0.6rem;
-	--radius-box: 1rem;
-	--radius-btn: 0.9rem;
-	--border: 1px;
+	--color-base-100: #ffffff;
+	--color-base-200: #f4f4f5;
+	--color-base-300: #e4e4e7;
+	--color-base-content: #09090b;
+	--color-primary: #18181b;
+	--color-primary-content: #fafafa;
+	--color-secondary: #f4f4f5;
+	--color-secondary-content: #18181b;
+	--color-neutral: #18181b;
+	--color-neutral-content: #fafafa;
+}
+
+@theme {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-fg);
+	--color-border: var(--border);
+	--color-ring: var(--ring);
+	--color-shadcn-primary: var(--primary);
+	--color-shadcn-primary-fg: var(--primary-fg);
+	--color-shadcn-secondary: var(--secondary);
+	--color-shadcn-secondary-fg: var(--secondary-fg);
+	--font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 @layer base {
+	*, *::before, *::after {
+		border-color: var(--border);
+	}
 	html {
 		scroll-behavior: smooth;
 	}
 	body {
-		@apply bg-base-100 text-base-content font-sans antialiased;
+		background-color: var(--background);
+		color: var(--foreground);
+		font-family: var(--font-sans);
+		-webkit-font-smoothing: antialiased;
+		margin: 0;
 	}
 	::selection {
-		@apply bg-primary/15 text-primary;
+		background-color: color-mix(in srgb, var(--primary) 20%, transparent);
+		color: var(--foreground);
 	}
+	:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+	}
+}
+
+/* shadcn button and control styling aligned with DaisyUI */
+.btn {
+	border-radius: calc(var(--radius) - 2px);
+	font-weight: 500;
+	font-size: 14px;
+	height: 36px;
+	min-height: 36px;
+	padding: 0 16px;
+	transition: background 0.15s ease, transform 0.15s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.15s ease;
+}
+
+.btn:active {
+	transform: scale(0.98);
+}
+
+.btn.btn-lg {
+	height: 40px;
+	min-height: 40px;
+	padding: 0 24px;
+	font-size: 14px;
+}
+
+.btn.btn-sm {
+	height: 32px;
+	min-height: 32px;
+	padding: 0 12px;
+	font-size: 13px;
+}
+
+.btn-primary {
+	background-color: var(--primary);
+	color: var(--primary-fg);
+	border-color: transparent;
+}
+.btn-primary:hover {
+	background-color: var(--primary);
+	opacity: 0.9;
+}
+
+.btn-outline {
+	background-color: var(--background);
+	color: var(--foreground);
+	border: 1px solid var(--border);
+	box-shadow: var(--shadow);
+}
+.btn-outline:hover {
+	background-color: var(--muted);
+	border-color: var(--border);
+	color: var(--foreground);
+	opacity: 1;
+}
+
+.btn-ghost {
+	background-color: transparent;
+	color: var(--foreground);
+	border-color: transparent;
+}
+.btn-ghost:hover {
+	background-color: var(--muted);
+	color: var(--foreground);
+}
+
+.input, .textarea {
+	border-radius: calc(var(--radius) - 2px);
+	border: 1px solid var(--border);
+	background-color: transparent;
+	font-size: 14px;
+	box-shadow: var(--shadow);
+	transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.input:focus, .textarea:focus {
+	outline: none;
+	border-color: var(--ring);
+	box-shadow: 0 0 0 2px color-mix(in srgb, var(--ring) 35%, transparent);
+}
+
+.badge {
+	border-radius: 9999px;
+	border: 1px solid var(--border);
+	font-size: 12px;
+	font-weight: 500;
+	padding: 2px 10px;
+}
+
+.badge-outline {
+	background-color: transparent;
+	border-color: var(--border);
+	color: var(--foreground);
+}
+
+.badge-secondary {
+	background-color: var(--secondary);
+	border-color: transparent;
+	color: var(--foreground);
+}
+
+/* Micro-animations */
+@keyframes bump {
+	40% {
+		transform: scale(1.35);
+	}
+}
+
+.animate-bump {
+	animation: bump 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 @utility no-scrollbar {
